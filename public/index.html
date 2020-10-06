@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Botanism</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+        <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet" />
+        <link rel="stylesheet" type="text/css" href="assets/styles.css" />
+    </head>
+    <body>
+
+        <!-- Navigations -->
+        <nav>
+            <div id="header">
+                <h1>Welcome to Botanism</h1>
+            </div>
+            <div id="search">
+                <input type="text" aria-label="plant name" placeholder="Search a name of a plant..."/>
+                <span id="searchIcon"><i class="fa fa-search" aria-hidden="true"></i></span>
+            </div>
+        </nav>
+
+        <!-- Display Properties -->
+        <div id="windowProperties" role="window wrapper"></div>
+        
+        <!-- Detail -->
+        <div id="plant_detail_wrapper" role="wrapper">
+            <div id="plant_detail" role="modal">
+                <div id="table_wrapper">
+                    <table id="table">
+                        <thead>
+                            <tr>
+                                <th scope="col" colspan="2">Info</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="table_body">
+    
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Animation -->
+        <div id="loading">
+            <div id="icon">
+                <img src="./assets/static_files/Eclipse-0.7s-200px.gif" alt="loading"/>
+
+            </div>
+        </div>
+
+        <!-- Page Selection Section -->
+        <div id="pages" role="pages"></div>
+
+        <script src="https://use.fontawesome.com/06bdd93dbd.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script src="sketch.js"></script>
+    </body>
+</html>

@@ -1,0 +1,26 @@
+// media query: 765
+@media only screen and (max-width: 765px) {
+    
+    #plant_detail {
+        @include displayProperties(75% !important, 65% !important, black);
+        transform: translate(15%, 30%) !important;
+    }
+}
+
+// max width: 550
+@media only screen and (max-width: 550px) {
+    
+    #plant_detail {
+        @include displayProperties(75% !important, 45% !important, black);
+        transform: translate(15%, 55%) !important;
+    }
+}
+
+// max width: 365 (Galaxy Fold size: 280)
+@media only screen and (max-width: 365px) {
+
+    #plant_detail {
+        @include displayProperties(75% !important, 25% !important, black);
+        transform: translate(15%, 145%) !important;
+    }
+}

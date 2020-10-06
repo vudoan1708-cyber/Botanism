@@ -1,0 +1,32 @@
+@import 'style_components/plant_detail';
+@import 'style_components/windowProperties';
+@import 'style_components/page_section';
+@import 'style_components/nav';
+@import 'style_components/loading';
+@import 'style_components/mobile/nav';
+@import 'style_components/mobile/plant_detail';
+
+* {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+html {
+    background-image: linear-gradient(to right, rgb(97, 150, 107), rgb(54, 141, 66));
+    background-size: cover;
+    width: 100%;
+    height: 100vh;
+    font-size: 18px;
+}
+
+// media query
+@media only screen and (max-width: 765px) {
+    
+    html {
+      font-size: 2vw;
+    }
+}

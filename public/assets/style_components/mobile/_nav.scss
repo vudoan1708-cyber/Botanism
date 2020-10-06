@@ -1,0 +1,44 @@
+// max width: 765
+@media only screen and (max-width: 765px) {
+
+    // search
+    input[type='text'] {
+
+        padding: 0 !important;
+    }
+
+    #searchIcon {
+        padding: 5px !important;
+    }
+
+    ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+        font-size: 2vw;
+    }
+    ::-moz-placeholder { /* Firefox 19+ */
+        font-size: 2vw;
+    }
+    :-ms-input-placeholder { /* IE 10+ */
+        font-size: 2vw;
+    }
+    :-moz-placeholder { /* Firefox 18- */
+        font-size: 2vw;
+    }
+}
+
+// max width: 550
+@media only screen and (max-width: 550px) {
+
+    // search
+    input[type='text'] {
+        width: 150px !important;
+    }
+}
+
+// max width: 365 (Galaxy Fold size: 280)
+@media only screen and (max-width: 365px) {
+
+    // search
+    input[type='text'] {
+        width: 100px !important;
+    }
+}

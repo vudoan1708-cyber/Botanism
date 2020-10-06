@@ -1,0 +1,24 @@
+{
+  "name": "plants-recipe",
+  "version": "1.0.0",
+  "description": "A web app that can recognise plants, image of plants,... tell users what that is in detail, and come up with a recipe that targets vegans",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/server.js"
+  },
+  "keywords": [
+    "plants",
+    "recognition",
+    "vegans",
+    "api"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "nedb": "^1.8.0",
+    "node-fetch": "^2.6.1"
+  }
+}
