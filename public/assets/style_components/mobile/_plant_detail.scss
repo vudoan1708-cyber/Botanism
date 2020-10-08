@@ -20,7 +20,7 @@
 @media only screen and (max-width: 365px) {
 
     #plant_detail {
-        @include displayProperties(75% !important, 25% !important, black);
-        transform: translate(15%, 145%) !important;
+        @include displayProperties(90% !important, 30% !important, black);
+        transform: translate(6%, 110%) !important;
     }
 }

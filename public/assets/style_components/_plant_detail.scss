@@ -12,10 +12,10 @@ $border-color:  #dee2e6;
 }
 
 @mixin transitionSettings() {
-    transition: 1s ease-in-out;
-            -moz-transition: 1s ease-in-out;
-            -ms-transition: 1s ease-in-out;
-            -o-transition: 1s ease-in-out;
+    transition: 1s ease-in-out !important;
+            -moz-transition: 1s ease-in-out !important;
+            -ms-transition: 1s ease-in-out !important;
+            -o-transition: 1s ease-in-out !important;
 }
 
 #plant_detail_wrapper {
@@ -33,18 +33,12 @@ $border-color:  #dee2e6;
             position: absolute;
             width: 50%;
             margin: 0;
+            left: 0;
             @include transitionSettings();
 
             .plant_detail_img {
                 width: 100%;
             }
-        }
-
-        .plant_detail_info {
-            padding-top: 20px;
-            width: 50%;
-            float: right;
-            clear: both;
         }
 
         #table_wrapper {
@@ -85,6 +79,12 @@ $border-color:  #dee2e6;
                     }
                 }
             }
+        }
+
+        #nutrientsChart {
+            display: none;
+            position: absolute;
+            @include transitionSettings();
         }
     }
 }

@@ -28,22 +28,16 @@
   position: absolute;
   width: 50%;
   margin: 0;
-  -webkit-transition: 1s ease-in-out;
-  transition: 1s ease-in-out;
-  -moz-transition: 1s ease-in-out;
-  -ms-transition: 1s ease-in-out;
-  -o-transition: 1s ease-in-out;
+  left: 0;
+  -webkit-transition: 1s ease-in-out !important;
+  transition: 1s ease-in-out !important;
+  -moz-transition: 1s ease-in-out !important;
+  -ms-transition: 1s ease-in-out !important;
+  -o-transition: 1s ease-in-out !important;
 }
 
 #plant_detail_wrapper #plant_detail .plant_detail_img_container .plant_detail_img {
   width: 100%;
-}
-
-#plant_detail_wrapper #plant_detail .plant_detail_info {
-  padding-top: 20px;
-  width: 50%;
-  float: right;
-  clear: both;
 }
 
 #plant_detail_wrapper #plant_detail #table_wrapper {
@@ -53,11 +47,11 @@
   clear: both;
   background-color: black;
   overflow-y: scroll;
-  -webkit-transition: 1s ease-in-out;
-  transition: 1s ease-in-out;
-  -moz-transition: 1s ease-in-out;
-  -ms-transition: 1s ease-in-out;
-  -o-transition: 1s ease-in-out;
+  -webkit-transition: 1s ease-in-out !important;
+  transition: 1s ease-in-out !important;
+  -moz-transition: 1s ease-in-out !important;
+  -ms-transition: 1s ease-in-out !important;
+  -o-transition: 1s ease-in-out !important;
 }
 
 #plant_detail_wrapper #plant_detail #table_wrapper #table {
@@ -85,6 +79,16 @@
   border: 2px solid #dee2e6;
   padding: 0.75rem;
   vertical-align: top;
+}
+
+#plant_detail_wrapper #plant_detail #nutrientsChart {
+  display: none;
+  position: absolute;
+  -webkit-transition: 1s ease-in-out !important;
+  transition: 1s ease-in-out !important;
+  -moz-transition: 1s ease-in-out !important;
+  -ms-transition: 1s ease-in-out !important;
+  -o-transition: 1s ease-in-out !important;
 }
 
 /* width of the entire scrollbar */
@@ -388,11 +392,11 @@ nav #search #searchIcon:hover {
     position: fixed;
     top: 0;
     left: 0;
-    width: 75% !important;
-    height: 25% !important;
+    width: 90% !important;
+    height: 30% !important;
     background-color: black;
-    -webkit-transform: translate(15%, 145%) !important;
-            transform: translate(15%, 145%) !important;
+    -webkit-transform: translate(6%, 110%) !important;
+            transform: translate(6%, 110%) !important;
   }
 }
 
