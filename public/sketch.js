@@ -5,8 +5,11 @@ const windows = document.getElementById('windowProperties'),
       table_wrapper = document.getElementById('table_wrapper'),
       table_body = document.getElementById('table_body'),
       loading = document.getElementById('loading'),
+      recipe_wrapper = document.getElementById('recipe_wrapper'),
       nutrientsChart = document.getElementById('nutrientsChart');
+
 let myChart = null;
+let navigatingIndex = 0;
 
 // RESTRUCTURE STRINGS
 async function reconstructStrings(name) {
@@ -122,14 +125,7 @@ function getModifiedIndexNumber(on_page_num, switched) {
 }
 
 // DETECTING MOBILE DEVICES 
-function mobileDevices() {
 
-    // device detection
-    if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent) 
-        || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0,4)))
-        return true;
-    else return false;
-}
 
 // WIKIPEDIA
 async function getWikipedia(param, turns) {
@@ -175,21 +171,60 @@ async function getWikipedia(param, turns) {
     }
 }
 
-function chartData(recipes, total_vals, Xlabels, daily_vals, num_case) {
+function nextPrevButtons(recipe) {
+
+    let buttons = [];
+
+    // create 2 new h5 tags
+    for (let i = 0; i < 2; i++) {
+        
+        // create two buttons and append them to the wrapper
+        buttons[i] = document.createElement('div');
+        buttons[i].className = 'recipe_nav_buttons';
+        recipe_wrapper.appendChild(buttons[i]);
+
+        // if i is the first array element
+        i === 0 ? 
+            (buttons[i].innerHTML = '<',
+
+            // add event listener
+            // scroll to top everytime a button is clicked
+            buttons[i].addEventListener('click', () => {
+                if (navigatingIndex > 0) {
+                    navigatingIndex--;
+                    recipe_wrapper.scrollTo({ top: 0, behavior: 'smooth' });
+                    chartData(null, null, null, 1);
+                    showRecipe(recipe);
+                }
+                else {
+                    navigatingIndex = 0;
+                    recipe_wrapper.scrollTop = 0;
+                    chartData(null, null, null, 1);
+                    showRecipe(recipe);
+                }
+            })) :
+
+        (buttons[i].innerHTML = '>', 
+        buttons[i].addEventListener('click', () => {
+            
+            const max = recipe.hits.length;
+
+            if (navigatingIndex < max) {
+                navigatingIndex++;
+                recipe_wrapper.scrollTop = 0;
+                chartData(null, null, null, 1);
+                showRecipe(recipe);
+            }
+        }));
+    }
+}
+
+function chartData(total_vals, Xlabels, daily_vals, num_case) {
 
     // destroy old charts to avoid glitchy effects
     // from overlaying charts created by creating instances of charts
     if (num_case === 1) myChart.destroy();
     else {
-
-        // divide the total number of recipes into individual one
-        const divided = total_vals.length / recipes;
-
-        // default value for the display, in order to show the first recipe
-        total_vals = total_vals.slice(0, divided);
-        Xlabels = Xlabels.slice(0, divided);
-
-        // plant_detail.style.overflowY = 'scroll';
 
         nutrientsChart.style.display = 'block';
 
@@ -238,8 +273,12 @@ function showRecipe(recipe) {
 
     let nutrients_labels = [],
         nutrients_values = [],
-        nutrients_daily = [];
+        nutrients_daily = [],
+        recipe_calories = [],
+        recipe_img_url = [],
+        recipe_label = [];
 
+    
     // check for a valid length of the array
     if (recipe.hits.length > 0) {
         console.log(recipe);
@@ -259,6 +298,10 @@ function showRecipe(recipe) {
                 node.id === 'nutrientsChart' ? 
                     (node.style.bottom = '0px') :
 
+                    // or if the node's id is recipe_wrapper
+                node.id === 'recipe_wrapper' ? 
+                    (node.style.zIndex = 2) :
+
                     // otherwise
                     (node.style.left = '-100%') :
             undefined;
@@ -267,22 +310,60 @@ function showRecipe(recipe) {
         // loop through the array
         for (let i = 0; i < recipe.hits.length; i++) {
 
-            const calories = recipe.hits[i].recipe.calories + 'kcal / serving';
-            const img_url = recipe.hits[i].recipe.image;
-            const digest = recipe.hits[i].recipe.digest;
+            recipe_calories.push(recipe.hits[i].recipe.calories + 'kcal / serving');
+            recipe_img_url.push(recipe.hits[i].recipe.image);
+            recipe_label.push(recipe.hits[i].recipe.label);
+
+            const recipe_digest = recipe.hits[i].recipe.digest;
 
             // loop through digest array
-            for(let j = 0; j < digest.length; j++) {
+            for(let j = 0; j < recipe_digest.length; j++) {
                 
-                nutrients_labels.push(digest[j].label);
-                nutrients_values.push(digest[j].total);
-                nutrients_daily.push(digest[j].daily);
+                nutrients_labels.push(recipe_digest[j].label);
+                nutrients_values.push(recipe_digest[j].total);
+                nutrients_daily.push(recipe_digest[j].daily);
             }
         }
 
+        
+        // divide the total number of recipes into individual one
+        const divided = nutrients_values.length / recipe.hits.length;
+
+        // create next and previous buttons for the recipe detail navigations
+        if (document.querySelector('.recipe_nav_buttons') === null)
+            nextPrevButtons(recipe);
+        else if (document.querySelector('.recipe_detail_img_container') !== null) {
+            removeElements(document.getElementsByTagName('h4'));
+            removeElements([document.querySelector('.recipe_detail_img_container')]);
+        }
+        
+        const img = document.createElement('img'),
+              img_div = document.createElement('div');
+        img.src = recipe_img_url[navigatingIndex];
+        img.className = 'recipe_detail_img'
+        img_div.className = 'recipe_detail_img_container';
+        img_div.style.display = 'block';
+
+        // append the img to the img div
+        img_div.appendChild(img);
+
+        // create the title of the recipe
+        const title = document.createElement('h4');
+        title.innerHTML = recipe_label[navigatingIndex];
+        
+        // append the title to recipe_wrapper div as the first element
+        recipe_wrapper.insertAdjacentElement('afterbegin', title);
+
+        // append the img div to recipe_wrapper div as the next sibling of title header
+        title.parentNode.insertBefore(img_div, title.nextSibling);
+
+        // default value for the display, in order to show the first recipe
+        nutrients_values = nutrients_values.slice(divided * navigatingIndex, divided * (navigatingIndex + 1));
+        nutrients_labels = nutrients_labels.slice(divided * navigatingIndex, divided * (navigatingIndex + 1));
+
         // draw a chart with the total number of recipes,
         // all recipe's total values, all the corresponding labels, and healthy daily consumption of the nutrients
-        chartData(recipe.hits.length, nutrients_values, nutrients_labels, nutrients_daily, 2);
+        chartData(nutrients_values, nutrients_labels, nutrients_daily, 2);
     }
 }
 
@@ -322,7 +403,7 @@ function showRecipeNotification(recipe) {
                     // display the toaster, with provided options
                     toastr.success('Click here to see more', `There is ${recipe.hits.length} recipe for this plant`, toastr.options) :
                     toastr.success('Click here to see more', `There are ${recipe.hits.length} recipes for this plant`, toastr.options) :
-            toastr.warning(`There is ${recipe.hits.length} recipe for this plant`, toastr.options) :
+            toastr.warning(`There is no recipe for this plant`, toastr.options) :
         toastr.error('Cannot get the data at the moment', 'Error', toastr.options):
 
     // otherwise, recipe is a null obj
@@ -479,7 +560,7 @@ async function displayTable(detail) {
 // SHOW DETAIL OF A PLANT
 async function showPlantDetails(detail, img_url) {
 
-    // BRING THE DETAILS DOWN IF A USER TRIES TO SEE OTHER INFO AFTER CLICKING THE TOASTR
+    // BRING THE DETAILS BACK TO DEFAULT STYLE IF A USER TRIES TO SEE OTHER INFO AFTER CLICKING THE TOASTR
     const childNodes = plant_detail.childNodes;
     
     // the default styling
@@ -493,21 +574,24 @@ async function showPlantDetails(detail, img_url) {
             // or if the node's id is nutrientsChart
             node.id === 'nutrientsChart' ? 
                 (node.style.bottom = '-100%') :
+
+            // or if the node's id is recipe_wrapper
+            node.id === 'recipe_wrapper' ? 
+                (node.style.zIndex = 0) :
                 
                 // otherwise
                 (node.style.left = '0') :
         undefined;
     });
 
-    plant_detail.style.overflow = 'hidden';
-
-    // select old div elements
-    const oldDivs = document.querySelectorAll('div'),
-          table_remover = document.querySelectorAll('.tr_body');
 
     ////////////////////////////////////////
     // REMOVE OLD ELEMENTS
     ////////////////////////////////////////
+
+    // select old div elements
+    const oldDivs = document.querySelectorAll('div'),
+          table_remover = document.querySelectorAll('.tr_body');
 
     // check if there are any one of them
     if (table_remover.length > 0) {
@@ -525,7 +609,7 @@ async function showPlantDetails(detail, img_url) {
         for (let i = oldDivs.length - 1; i >= 0; i--) {
 
             // find the according class names
-            if (oldDivs[i].className === 'plant_detail_img_container') {
+            if (oldDivs[i].className === 'plant_detail_img_container' || oldDivs[i].className === 'recipe_detail_img_container') {
 
                     // push those divs in a temporarily made array
                     temp_arr.push(oldDivs[i]);
@@ -569,16 +653,24 @@ async function showPlantDetails(detail, img_url) {
 
         // check if a mouse click is not registered on #plant_detail
         if (!plant_detail.contains(event.target)) {
-
+            
             // hide all the detail-related elements
             plant_detail.style.display = 'none';
             plant_detail_wrapper.style.display = 'none';
+
+            // reset the index variable used for navigation in recipe section
+            navigatingIndex = 0;
 
             // look for a valid class name of chartjs, to see if it's appended to the DOM
             document.querySelector('.chartjs-size-monitor') !== null ? 
 
                 // if there is, destroy the chart
-                chartData(null, null, null, null, 1) :
+                (chartData(null, null, null, 1), 
+                
+                // and get rid of the h4 tags and the nav buttons
+                removeElements(document.getElementsByTagName('h4')),
+                removeElements(document.querySelectorAll('.recipe_nav_buttons'))
+                ) :
             
             // otherwise, if a chart is not displayed
             undefined;
@@ -885,6 +977,25 @@ async function getPlants(PAGE, on_page_num) {
 
     // show the plants
     showPlants(plants, PAGE, on_page_num);
+}
+
+// SEARCH PLANTS
+async function searchPlants(PAGE, on_page_num) {
+    
+    // create an options instance
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    
+    const request = await fetch(`/search/${searched_title.value}/${PAGE}`, options);
+    const results = await request.json();
+    console.log(results);
+
+    // show the plants
+    showPlants(results, PAGE, on_page_num);
 }
 
 // getPlants(a, b)

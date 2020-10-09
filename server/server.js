@@ -50,3 +50,14 @@ app.use('/wiki/:param', async (req, res, next) => {
 // edamam
 const edamam = require('./routes/edamam');
 app.use('/recipe', edamam);
+
+// trefle search
+const search = require('./routes/trefle_search');
+app.use('/search', async (req, res, next) => {
+
+    // pack all the necessary variables into a request 
+    req.info = { TOKEN };
+    next();
+
+    // send it to the router
+}, search);

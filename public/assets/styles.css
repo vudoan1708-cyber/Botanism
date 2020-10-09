@@ -7,6 +7,7 @@
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.39);
   background-size: cover;
+  z-index: 1;
 }
 
 #plant_detail_wrapper #plant_detail {
@@ -29,6 +30,7 @@
   width: 50%;
   margin: 0;
   left: 0;
+  z-index: 3;
   -webkit-transition: 1s ease-in-out !important;
   transition: 1s ease-in-out !important;
   -moz-transition: 1s ease-in-out !important;
@@ -47,6 +49,7 @@
   clear: both;
   background-color: black;
   overflow-y: scroll;
+  z-index: 3;
   -webkit-transition: 1s ease-in-out !important;
   transition: 1s ease-in-out !important;
   -moz-transition: 1s ease-in-out !important;
@@ -81,9 +84,65 @@
   vertical-align: top;
 }
 
-#plant_detail_wrapper #plant_detail #nutrientsChart {
-  display: none;
+#plant_detail_wrapper #plant_detail #recipe_wrapper {
   position: absolute;
+  width: 100%;
+  max-height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-transition: 1s ease-in-out !important;
+  transition: 1s ease-in-out !important;
+  -moz-transition: 1s ease-in-out !important;
+  -ms-transition: 1s ease-in-out !important;
+  -o-transition: 1s ease-in-out !important;
+}
+
+#plant_detail_wrapper #plant_detail #recipe_wrapper h4 {
+  margin: 10px 0;
+}
+
+#plant_detail_wrapper #plant_detail #recipe_wrapper .recipe_nav_buttons {
+  display: inline-block;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  background: #201f1f;
+  color: #dee2e6;
+  padding: 15px;
+  margin: 25px;
+  border-radius: 10px;
+  font-size: 15px;
+  -webkit-transition: 0.25s ease-in-out !important;
+  transition: 0.25s ease-in-out !important;
+  -moz-transition: 0.25s ease-in-out !important;
+  -ms-transition: 0.25s ease-in-out !important;
+  -o-transition: 0.25s ease-in-out !important;
+}
+
+#plant_detail_wrapper #plant_detail #recipe_wrapper .recipe_nav_buttons:hover {
+  background: #dee2e6;
+  color: #201f1f;
+}
+
+#plant_detail_wrapper #plant_detail #recipe_wrapper .recipe_detail_img_container {
+  display: none;
+  position: relative;
+  -webkit-transform: translateX(50%);
+          transform: translateX(50%);
+  width: 50%;
+  -webkit-transition: 1s ease-in-out !important;
+  transition: 1s ease-in-out !important;
+  -moz-transition: 1s ease-in-out !important;
+  -ms-transition: 1s ease-in-out !important;
+  -o-transition: 1s ease-in-out !important;
+}
+
+#plant_detail_wrapper #plant_detail #recipe_wrapper .recipe_detail_img_container .recipe_detail_img {
+  width: 100%;
+  border-radius: 5px;
+}
+
+#plant_detail_wrapper #plant_detail #recipe_wrapper #nutrientsChart {
   -webkit-transition: 1s ease-in-out !important;
   transition: 1s ease-in-out !important;
   -moz-transition: 1s ease-in-out !important;
@@ -92,29 +151,34 @@
 }
 
 /* width of the entire scrollbar */
-#table_wrapper::-webkit-scrollbar {
+#table_wrapper::-webkit-scrollbar,
+#recipe_wrapper::-webkit-scrollbar {
   /* Chrome/Opera/Safari */
   width: 5px;
 }
 
-#table_wrapper::-moz-scrollbar {
+#table_wrapper::-moz-scrollbar,
+#recipe_wrapper::-webkit-scrollbar {
   /* Firefox 19+ */
   width: 5px;
 }
 
 /* color of the tracking area */
-#table_wrapper::-webkit-scrollbar-track {
+#table_wrapper::-webkit-scrollbar-track,
+#recipe_wrapper::-webkit-scrollbar-track {
   border-radius: 20px;
   background: #e9f16cf1;
 }
 
-#table_wrapper::-moz-scrollbar-track {
+#table_wrapper::-moz-scrollbar-track,
+#recipe_wrapper::-webkit-scrollbar-track {
   border-radius: 20px;
   background: #e9f16cf1;
 }
 
 /* scrollbar thumb */
-#table_wrapper::-webkit-scrollbar-thumb {
+#table_wrapper::-webkit-scrollbar-thumb,
+#recipe_wrapper::-webkit-scrollbar-thumb {
   background-color: black;
   /* color of the scroll thumb */
   border-radius: 20px;
@@ -123,7 +187,8 @@
   /* creates padding around scroll thumb */
 }
 
-#table_wrapper::-moz-scrollbar-thumb {
+#table_wrapper::-moz-scrollbar-thumb,
+#recipe_wrapper::-webkit-scrollbar-thumb {
   background-color: black;
   /* color of the scroll thumb */
   border-radius: 20px;
@@ -140,6 +205,7 @@
   border-top: 1px solid black;
   text-align: center;
   margin: 10px 0;
+  z-index: 0;
 }
 
 #windowProperties .wrapper {
