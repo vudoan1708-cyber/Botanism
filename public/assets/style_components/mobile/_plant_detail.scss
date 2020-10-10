@@ -14,6 +14,11 @@
         @include displayProperties(75% !important, 45% !important, black);
         transform: translate(15%, 55%) !important;
     }
+
+    .recipe_nav_buttons {
+        margin: 10px !important;
+        padding: 10px !important;
+    }
 }
 
 // max width: 365 (Galaxy Fold size: 280)

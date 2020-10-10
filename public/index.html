@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Botanism</title>
+        <link rel="shortcut icon" href="./assets/static_files/icon.png"/>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
         <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet" />
@@ -13,11 +14,12 @@
 
         <!-- Navigations -->
         <nav>
-            <div id="header">
+            <div id="header" onclick="getPlants(1, 0);">
+                <img id="icon" src="./assets/static_files/icon.png" alt="web icon"/>
                 <h1>Welcome to Botanism</h1>
             </div>
             <div id="search">
-                <input id="searched_title" type="text" aria-label="plant name" placeholder="Search a name of a plant..."/>
+                <input id="searched_title" type="text" aria-label="plant name" placeholder="Search an item..."/>
                 <span id="searchIcon" onclick="searchPlants(1, 0);"><i class="fa fa-search" aria-hidden="true"></i></span>
             </div>
         </nav>

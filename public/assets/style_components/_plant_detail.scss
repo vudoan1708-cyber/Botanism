@@ -113,6 +113,11 @@ $border-color:  #dee2e6;
                 }
             }
 
+            #navigatingIndex {
+                background: $bg-color;
+                color: $border-color;
+            }
+
             .recipe_detail_img_container {
                 display: none;
                 position: relative;

@@ -7,9 +7,9 @@ const windows = document.getElementById('windowProperties'),
       loading = document.getElementById('loading'),
       recipe_wrapper = document.getElementById('recipe_wrapper'),
       nutrientsChart = document.getElementById('nutrientsChart');
-
 let myChart = null;
 let navigatingIndex = 0;
+let searched_keyword = '';
 
 // RESTRUCTURE STRINGS
 async function reconstructStrings(name) {
@@ -176,7 +176,7 @@ function nextPrevButtons(recipe) {
     let buttons = [];
 
     // create 2 new h5 tags
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 3; i++) {
         
         // create two buttons and append them to the wrapper
         buttons[i] = document.createElement('div');
@@ -204,18 +204,24 @@ function nextPrevButtons(recipe) {
                 }
             })) :
 
-        (buttons[i].innerHTML = '>', 
-        buttons[i].addEventListener('click', () => {
-            
-            const max = recipe.hits.length;
+        // if i is the last array element
+        i === 2 ? 
+            (buttons[i].innerHTML = '>', 
+            buttons[i].addEventListener('click', () => {
+                
+                const max = recipe.hits.length - 1;
 
-            if (navigatingIndex < max) {
-                navigatingIndex++;
-                recipe_wrapper.scrollTop = 0;
-                chartData(null, null, null, 1);
-                showRecipe(recipe);
-            }
-        }));
+                if (navigatingIndex < max) {
+                    navigatingIndex++;
+                    recipe_wrapper.scrollTop = 0;
+                    chartData(null, null, null, 1);
+                    showRecipe(recipe);
+                }
+            })) :
+        
+        // otherwise
+        (buttons[i].innerHTML = navigatingIndex,
+            buttons[i].id = 'navigatingIndex');
     }
 }
 
@@ -271,6 +277,10 @@ function chartData(total_vals, Xlabels, daily_vals, num_case) {
 // SHOW RECIPE ONCE THE NOTIFICATION IS CLICKED
 function showRecipe(recipe) {
 
+    // display index page inside recipe section
+    const recipe_pages = document.getElementById('navigatingIndex');
+    if (recipe_pages !== null) recipe_pages.innerHTML = navigatingIndex;
+
     let nutrients_labels = [],
         nutrients_values = [],
         nutrients_daily = [],
@@ -281,7 +291,6 @@ function showRecipe(recipe) {
     
     // check for a valid length of the array
     if (recipe.hits.length > 0) {
-        console.log(recipe);
 
         const childNodes = plant_detail.childNodes;
 
@@ -648,8 +657,8 @@ async function showPlantDetails(detail, img_url) {
     plant_detail.appendChild(imgDiv);
 
     // close the pop-up detail
-    // add a click event listener on #plant_detail_wrapper
-    plant_detail_wrapper.addEventListener('click', function (event) {
+    // add a mouseup event listener on #plant_detail_wrapper (mouse release)
+    plant_detail_wrapper.addEventListener('mouseup', function (event) {
 
         // check if a mouse click is not registered on #plant_detail
         if (!plant_detail.contains(event.target)) {
@@ -693,13 +702,12 @@ async function getPlantDetails(id, PAGE, img_url) {
     // pass in a parameter
     const request = await fetch(`/page/${PAGE}/detail/${id}`, options);
     const details = await request.json();
-    console.log(details);
 
     showPlantDetails(details, img_url);
 }
 
 //LIST ALL THE PAGES
-function listPages(total_plants, on_page_num) {
+function listPages(total_plants, on_page_num, isSearched) {
 
     const total_pages = Math.floor(total_plants / 20),
           subtracted = total_pages - on_page_num;
@@ -756,9 +764,19 @@ function listPages(total_plants, on_page_num) {
             // listen for a click event on one of the page numbers
             num_pages[i].addEventListener('click', async function () {
 
-                // re-start the workflow, with a selected page index passed in 
-                // to get started from there instead of going back from scratch 
-                await getPlants(i + 1, i);            
+                // if the workflow chain starts with a search
+                if (isSearched) {
+
+                    // re-start the workflow, with a selected page index passed in 
+                    // to get started from there instead of going back from scratch 
+                    await searchPlants(i + 1, i);  
+
+                // otherwise
+                } else {
+
+                    // same logic
+                    await getPlants(i + 1, i);  
+                }          
                 
                 // scroll the page to the top again
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -814,15 +832,11 @@ async function appendImages(img, plant_name, url, scientific_name, common_name, 
                 if (params.turns === 1) {
                 
                     params = await getWikipedia(scientific_name, params.turns);
-                    await appendImages(img, plant_name, url, scientific_name, common_name, params, params.turns);                    
-                    // console.log('Scientific ' + params.turns);
-                    // console.log('Scientific ' + params.IMG_URL);
+                    await appendImages(img, plant_name, url, scientific_name, common_name, params, params.turns);
 
                 } else if (params.turns === 2) {
                 
                     params = await getWikipedia(common_name, params.turns);
-                    // console.log('Common ' + params.turns);
-                    // console.log('Common ' + params.IMG_URL);
                 }
             }
             img.src = await params.IMG_URL;
@@ -872,7 +886,7 @@ async function appendNames(common_name, synonyms, scientific_name) {
 }
 
 //DISPLAY ALL THE PLANTS ON THE SCREEN
-async function showPlants(plants, PAGE, on_page_num) {
+async function showPlants(plants, PAGE, on_page_num, isSearched) {
     
     let newPlants = [],
         newDivs = [],
@@ -955,7 +969,7 @@ async function showPlants(plants, PAGE, on_page_num) {
     }
 
     // list out 20321 pages
-    listPages(plants.meta.total, on_page_num);
+    listPages(plants.meta.total, on_page_num, isSearched);
 }
 
 // GET RECIPE FROM TREFLE
@@ -973,14 +987,16 @@ async function getPlants(PAGE, on_page_num) {
     // pass in a parameter
     const request = await fetch(`/page/${PAGE}`, options);
     const plants = await request.json();
-    console.log(plants);
 
     // show the plants
-    showPlants(plants, PAGE, on_page_num);
+    showPlants(plants, PAGE, on_page_num, false);
 }
 
 // SEARCH PLANTS
 async function searchPlants(PAGE, on_page_num) {
+
+    // pass the searched keyword to a global variable, so that later on, the search field will be emptied out
+    if (searched_title.value !== '') searched_keyword = searched_title.value;
     
     // create an options instance
     const options = {
@@ -990,12 +1006,18 @@ async function searchPlants(PAGE, on_page_num) {
         }
     };
     
-    const request = await fetch(`/search/${searched_title.value}/${PAGE}`, options);
+    // make a request to the server side
+    const request = await fetch(`/search/${searched_keyword}/${PAGE}`, options);
     const results = await request.json();
-    console.log(results);
+
+    // reset the text field to an empty string after search results come back
+    searched_title.value = '';
+
+    // keep the search area focused after search
+    searched_title.focus();
 
     // show the plants
-    showPlants(results, PAGE, on_page_num);
+    showPlants(results, PAGE, on_page_num, true);
 }
 
 // getPlants(a, b)
