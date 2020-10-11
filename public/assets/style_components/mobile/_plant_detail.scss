@@ -28,4 +28,11 @@
         @include displayProperties(90% !important, 30% !important, black);
         transform: translate(6%, 110%) !important;
     }
+
+    #game_entry {
+
+        input[type='text'] {
+            margin: 0 !important;
+        }
+    }
 }

@@ -1,0 +1,1 @@
+const game_canvas = document.getElementById('game_canvas');

@@ -1,3 +1,4 @@
+// constant variables (DOM elements)
 const windows = document.getElementById('windowProperties'),
       plant_detail = document.getElementById('plant_detail'),
       plant_detail_wrapper = document.getElementById('plant_detail_wrapper'),
@@ -6,7 +7,11 @@ const windows = document.getElementById('windowProperties'),
       table_body = document.getElementById('table_body'),
       loading = document.getElementById('loading'),
       recipe_wrapper = document.getElementById('recipe_wrapper'),
-      nutrientsChart = document.getElementById('nutrientsChart');
+      nutrientsChart = document.getElementById('nutrientsChart'),
+      game_entry = document.getElementById('game_entry'),
+      user_icon = document.getElementById('user_icon');
+
+// global assignable variables
 let myChart = null;
 let navigatingIndex = 0;
 let searched_keyword = '';
@@ -655,36 +660,6 @@ async function showPlantDetails(detail, img_url) {
 
     imgDiv.appendChild(img);
     plant_detail.appendChild(imgDiv);
-
-    // close the pop-up detail
-    // add a mouseup event listener on #plant_detail_wrapper (mouse release)
-    plant_detail_wrapper.addEventListener('mouseup', function (event) {
-
-        // check if a mouse click is not registered on #plant_detail
-        if (!plant_detail.contains(event.target)) {
-            
-            // hide all the detail-related elements
-            plant_detail.style.display = 'none';
-            plant_detail_wrapper.style.display = 'none';
-
-            // reset the index variable used for navigation in recipe section
-            navigatingIndex = 0;
-
-            // look for a valid class name of chartjs, to see if it's appended to the DOM
-            document.querySelector('.chartjs-size-monitor') !== null ? 
-
-                // if there is, destroy the chart
-                (chartData(null, null, null, 1), 
-                
-                // and get rid of the h4 tags and the nav buttons
-                removeElements(document.getElementsByTagName('h4')),
-                removeElements(document.querySelectorAll('.recipe_nav_buttons'))
-                ) :
-            
-            // otherwise, if a chart is not displayed
-            undefined;
-        }
-    });
 }
 
 // GET DETAIL OF A PLANT
@@ -795,6 +770,56 @@ function listPages(total_plants, on_page_num, isSearched) {
     }
 }
 
+// SHOW GAME ENTRY
+function showGameEntry(names, urls) {
+
+    // pick a random icon
+    const icon_url = urls[Math.floor(Math.random() * (urls.length))];
+    
+    // append src img
+    user_icon.src = icon_url;
+    plant_detail_wrapper.style.display = 'block';
+    game_entry.style.display = 'block';
+}
+
+// BUTTONS FOR GAMIFICATIONS SECTION
+function showGamificationButton(names, urls) {
+    
+    // create a button
+    const gameButton = document.createElement('div'),
+          gameStartButton = document.createElement('div');
+    
+    gameStartButton.innerHTML = 'START';
+    gameStartButton.id = 'start_game_button';
+    entry_info.parentNode.insertBefore(gameStartButton, entry_info.nextSibling);
+
+    // assign an id to it
+    gameButton.id = 'guess_game_button';
+
+    // insert text
+    gameButton.innerHTML = 'Guess A Plant';
+
+    // append it next to the pages div tag as a next sibling element
+    pages.parentNode.insertBefore(gameButton, pages.nextSibling);
+
+    // add a mouseup event listener to the buttons
+    gameButton.addEventListener('mouseup', () => {
+        
+        showGameEntry(names, urls);
+    });
+    gameStartButton.addEventListener('mouseup', () => {
+
+        // if the text field for username input is not empty
+        if (username.value !== '') {
+
+            const PATH = './assets/game/game.html';
+            
+            // re-direct to another javascript file
+            location.href = PATH;
+        }
+    });
+}
+
 // DISPLAY IMAGES
 async function appendImages(img, plant_name, url, scientific_name, common_name, params, turns) {
     
@@ -847,6 +872,8 @@ async function appendImages(img, plant_name, url, scientific_name, common_name, 
 
     loading.style.display = 'none';
     document.body.parentNode.style.cursor = 'context-menu';
+
+    return img.src;
 }
 
 // DISPLAY NAMES
@@ -895,7 +922,12 @@ async function showPlants(plants, PAGE, on_page_num, isSearched) {
         newDiv_Plants = [],
         oldDivs = [];
 
-    let plant_name = '';
+    // to store names and images that are already MODIFIED
+    let allPlantsNames = [],
+        allPlantsImages = [];
+
+    let plant_name = '',
+        plant_img = '';
 
     // select all the old divs to fill in new ones when a user clicks to different pages
     oldDivs = document.querySelectorAll('div');
@@ -935,14 +967,16 @@ async function showPlants(plants, PAGE, on_page_num, isSearched) {
 
         // add names
         plant_name = await appendNames(plants.data[i].common_name, plants.data[i].synonyms, plants.data[i].scientific_name);
-        
+        allPlantsNames.push(plant_name);
+
         // create p elements
         newPlants[i] = document.createElement('p');
         newPlants[i].innerHTML = plant_name;
         newDiv_Plants[i].className = 'plant_names';
 
         // add images, with any name comes out from the plant_name variable
-        await appendImages(newImgs[i], plant_name, plants.data[i].image_url, plants.data[i].scientific_name, plants.data[i].common_name, '', 0);
+        plant_img = await appendImages(newImgs[i], plant_name, plants.data[i].image_url, plants.data[i].scientific_name, plants.data[i].common_name, '', 0);
+        allPlantsImages.push(plant_img);
 
         newDiv_Imgs[i].className = 'plant_imgs';
 
@@ -967,6 +1001,9 @@ async function showPlants(plants, PAGE, on_page_num, isSearched) {
             table_wrapper.scrollTop = 0;
         });
     }
+
+    // create a section for gamification
+    showGamificationButton(allPlantsNames, allPlantsImages);
 
     // list out 20321 pages
     listPages(plants.meta.total, on_page_num, isSearched);
@@ -1020,7 +1057,43 @@ async function searchPlants(PAGE, on_page_num) {
     showPlants(results, PAGE, on_page_num, true);
 }
 
-// getPlants(a, b)
-// a: real page number on the web app
-// b: index number from a for loop
-getPlants(1, 0);
+// LOAD NECESSARRY FUNCTIONALITIES OF THE WEB APP AS SOON AS IT OPENS
+window.onload = function() {
+
+    // getPlants(a, b)
+    // a: real page number on the web app
+    // b: index number from a for loop
+    getPlants(1, 0);
+
+    // close the pop-up detail
+    // add a mouseup event listener on #plant_detail_wrapper (mouse release)
+    plant_detail_wrapper.addEventListener('mouseup', function (event) {
+            
+        // check if a mouse click is not registered on #plant_detail and #game_entry
+        if (!plant_detail.contains(event.target) && !game_entry.contains(event.target)) {
+            
+            // hide all the detail-related elements
+            plant_detail_wrapper.style.display = 'none';
+            plant_detail.style.display = 'none';
+            game_entry.style.display = 'none';
+
+            // reset the index variable used for navigation in recipe section
+            navigatingIndex = 0;
+
+            // look for a valid class name of chartjs, to see if it's appended to the DOM
+            document.querySelector('.chartjs-size-monitor') !== null ? 
+
+                // if there is, destroy the chart
+                (chartData(null, null, null, 1), 
+                
+                // and get rid of the h4 tags and the nav buttons
+                removeElements(document.getElementsByTagName('h4')),
+                removeElements(document.querySelectorAll('.recipe_nav_buttons'))
+                ) :
+            
+            // otherwise, if a chart is not displayed
+            undefined;
+
+        }
+    });
+}

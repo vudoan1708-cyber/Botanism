@@ -10,7 +10,7 @@
   z-index: 1;
 }
 
-#plant_detail_wrapper #plant_detail {
+#plant_detail_wrapper #plant_detail, #plant_detail_wrapper #game_entry {
   display: none;
   position: fixed;
   top: 0;
@@ -25,7 +25,7 @@
   overflow: hidden;
 }
 
-#plant_detail_wrapper #plant_detail .plant_detail_img_container {
+#plant_detail_wrapper #plant_detail .plant_detail_img_container, #plant_detail_wrapper #game_entry .plant_detail_img_container {
   position: absolute;
   width: 50%;
   margin: 0;
@@ -38,11 +38,11 @@
   -o-transition: 1s ease-in-out !important;
 }
 
-#plant_detail_wrapper #plant_detail .plant_detail_img_container .plant_detail_img {
+#plant_detail_wrapper #plant_detail .plant_detail_img_container .plant_detail_img, #plant_detail_wrapper #game_entry .plant_detail_img_container .plant_detail_img {
   width: 100%;
 }
 
-#plant_detail_wrapper #plant_detail #table_wrapper {
+#plant_detail_wrapper #plant_detail #table_wrapper, #plant_detail_wrapper #game_entry #table_wrapper {
   width: 50%;
   max-height: 100%;
   float: right;
@@ -57,7 +57,7 @@
   -o-transition: 1s ease-in-out !important;
 }
 
-#plant_detail_wrapper #plant_detail #table_wrapper #table {
+#plant_detail_wrapper #plant_detail #table_wrapper #table, #plant_detail_wrapper #game_entry #table_wrapper #table {
   position: relative;
   border-collapse: collapse;
   border-spacing: 2px;
@@ -66,25 +66,25 @@
   border: 2px solid #dee2e6;
 }
 
-#plant_detail_wrapper #plant_detail #table_wrapper #table thead {
+#plant_detail_wrapper #plant_detail #table_wrapper #table thead, #plant_detail_wrapper #game_entry #table_wrapper #table thead {
   color: #e7e6e6;
 }
 
-#plant_detail_wrapper #plant_detail #table_wrapper #table thead th {
+#plant_detail_wrapper #plant_detail #table_wrapper #table thead th, #plant_detail_wrapper #game_entry #table_wrapper #table thead th {
   vertical-align: bottom;
   border-bottom: 2px solid #dee2e6;
   padding: 0.75rem;
   text-align: inherit;
 }
 
-#plant_detail_wrapper #plant_detail #table_wrapper #table tbody .td_body {
+#plant_detail_wrapper #plant_detail #table_wrapper #table tbody .td_body, #plant_detail_wrapper #game_entry #table_wrapper #table tbody .td_body {
   color: rgba(231, 230, 230, 0.534);
   border: 2px solid #dee2e6;
   padding: 0.75rem;
   vertical-align: top;
 }
 
-#plant_detail_wrapper #plant_detail #recipe_wrapper {
+#plant_detail_wrapper #plant_detail #recipe_wrapper, #plant_detail_wrapper #game_entry #recipe_wrapper {
   position: absolute;
   width: 100%;
   max-height: 100%;
@@ -97,11 +97,11 @@
   -o-transition: 1s ease-in-out !important;
 }
 
-#plant_detail_wrapper #plant_detail #recipe_wrapper h4 {
+#plant_detail_wrapper #plant_detail #recipe_wrapper h4, #plant_detail_wrapper #game_entry #recipe_wrapper h4 {
   margin: 10px 0;
 }
 
-#plant_detail_wrapper #plant_detail #recipe_wrapper .recipe_nav_buttons {
+#plant_detail_wrapper #plant_detail #recipe_wrapper .recipe_nav_buttons, #plant_detail_wrapper #game_entry #recipe_wrapper .recipe_nav_buttons {
   display: inline-block;
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
@@ -119,17 +119,17 @@
   -o-transition: 0.25s ease-in-out !important;
 }
 
-#plant_detail_wrapper #plant_detail #recipe_wrapper .recipe_nav_buttons:hover {
+#plant_detail_wrapper #plant_detail #recipe_wrapper .recipe_nav_buttons:hover, #plant_detail_wrapper #game_entry #recipe_wrapper .recipe_nav_buttons:hover {
   background: #dee2e6;
   color: #201f1f;
 }
 
-#plant_detail_wrapper #plant_detail #recipe_wrapper #navigatingIndex {
+#plant_detail_wrapper #plant_detail #recipe_wrapper #navigatingIndex, #plant_detail_wrapper #game_entry #recipe_wrapper #navigatingIndex {
   background: black;
   color: #dee2e6;
 }
 
-#plant_detail_wrapper #plant_detail #recipe_wrapper .recipe_detail_img_container {
+#plant_detail_wrapper #plant_detail #recipe_wrapper .recipe_detail_img_container, #plant_detail_wrapper #game_entry #recipe_wrapper .recipe_detail_img_container {
   display: none;
   position: relative;
   -webkit-transform: translateX(50%);
@@ -142,17 +142,86 @@
   -o-transition: 1s ease-in-out !important;
 }
 
-#plant_detail_wrapper #plant_detail #recipe_wrapper .recipe_detail_img_container .recipe_detail_img {
+#plant_detail_wrapper #plant_detail #recipe_wrapper .recipe_detail_img_container .recipe_detail_img, #plant_detail_wrapper #game_entry #recipe_wrapper .recipe_detail_img_container .recipe_detail_img {
   width: 100%;
   border-radius: 5px;
 }
 
-#plant_detail_wrapper #plant_detail #recipe_wrapper #nutrientsChart {
+#plant_detail_wrapper #plant_detail #recipe_wrapper #nutrientsChart, #plant_detail_wrapper #game_entry #recipe_wrapper #nutrientsChart {
   -webkit-transition: 1s ease-in-out !important;
   transition: 1s ease-in-out !important;
   -moz-transition: 1s ease-in-out !important;
   -ms-transition: 1s ease-in-out !important;
   -o-transition: 1s ease-in-out !important;
+}
+
+#plant_detail_wrapper #game_entry {
+  -webkit-transition: 1s ease-in-out !important;
+  transition: 1s ease-in-out !important;
+  -moz-transition: 1s ease-in-out !important;
+  -ms-transition: 1s ease-in-out !important;
+  -o-transition: 1s ease-in-out !important;
+  text-align: center;
+}
+
+#plant_detail_wrapper #game_entry h2 {
+  margin-top: 10px;
+}
+
+#plant_detail_wrapper #game_entry #entry_info {
+  position: absolute;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  top: 50%;
+  width: 100%;
+  height: 60%;
+  background-color: rgba(106, 209, 106, 0.644);
+}
+
+#plant_detail_wrapper #game_entry #entry_info #user_icon_wrapper {
+  position: relative;
+  width: 100%;
+  height: 40%;
+  margin: 25px 0;
+}
+
+#plant_detail_wrapper #game_entry #entry_info #user_icon_wrapper #user_icon {
+  width: 15%;
+  border-radius: 50%;
+}
+
+#plant_detail_wrapper #game_entry #entry_info input[type='text'] {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  margin: 25px 0;
+  padding: 5px 10px 5px 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+#plant_detail_wrapper #game_entry #start_game_button {
+  position: absolute;
+  bottom: 0;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  left: 50%;
+  padding: 10px;
+  background-color: lightyellow;
+  color: #202020;
+  border-radius: 5px;
+  cursor: pointer;
+  -webkit-transition: 0.25s ease-in-out !important;
+  transition: 0.25s ease-in-out !important;
+  -moz-transition: 0.25s ease-in-out !important;
+  -ms-transition: 0.25s ease-in-out !important;
+  -o-transition: 0.25s ease-in-out !important;
+}
+
+#plant_detail_wrapper #game_entry #start_game_button:hover {
+  background-color: #388638;
 }
 
 /* width of the entire scrollbar */
@@ -456,7 +525,7 @@ nav #search #searchIcon:hover {
 }
 
 @media only screen and (max-width: 765px) {
-  #plant_detail {
+  #plant_detail, #plant_detail_wrapper #game_entry {
     display: none;
     position: fixed;
     top: 0;
@@ -470,7 +539,7 @@ nav #search #searchIcon:hover {
 }
 
 @media only screen and (max-width: 550px) {
-  #plant_detail {
+  #plant_detail, #plant_detail_wrapper #game_entry {
     display: none;
     position: fixed;
     top: 0;
@@ -488,7 +557,7 @@ nav #search #searchIcon:hover {
 }
 
 @media only screen and (max-width: 365px) {
-  #plant_detail {
+  #plant_detail, #plant_detail_wrapper #game_entry {
     display: none;
     position: fixed;
     top: 0;
@@ -498,6 +567,9 @@ nav #search #searchIcon:hover {
     background-color: black;
     -webkit-transform: translate(6%, 110%) !important;
             transform: translate(6%, 110%) !important;
+  }
+  #game_entry input[type='text'] {
+    margin: 0 !important;
   }
 }
 
@@ -517,6 +589,25 @@ html {
   width: 100%;
   height: 100vh;
   font-size: 18px;
+}
+
+html #guess_game_button {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(39, 180, 39, 0.651);
+  color: snow;
+  padding: 10px;
+  cursor: pointer;
+  -webkit-transition: 0.25s ease-in-out;
+  transition: 0.25s ease-in-out;
+  -moz-transition: 0.25s ease-in-out;
+  -ms-transition: 0.25s ease-in-out;
+  -o-transition: 0.25s ease-in-out;
+}
+
+html #guess_game_button:hover {
+  color: #1f201f;
 }
 
 @media only screen and (max-width: 765px) {
