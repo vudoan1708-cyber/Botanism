@@ -16,6 +16,55 @@ let myChart = null;
 let navigatingIndex = 0;
 let searched_keyword = '';
 
+// ADD A GLOBAL KEYBOARD LISTENER
+function escapeHit(inGame) {
+
+    // if not in the game section
+    if (!inGame) {
+        
+        // add keydown event listeners
+        document.getElementById('search').addEventListener('keydown', (e) => {
+
+            // if escape key is pressed, search for plants
+            if (e.key === 'Enter') searchPlants(1, 0);
+        });
+
+    } else {
+        const ingame_input_field = document.getElementById('ingame_input_field');
+        ingame_input_field.addEventListener('keydown', (e) => {
+            
+            if (e.key === 'Enter') {
+
+                for (let i = 0; i < weapons.length; i++) {
+
+                    // compare the input string and the plant name
+                    const isMatched = weapons[i].compare(ingame_input_field.value.toLowerCase().replace(/^\s+|\s+$/g, ''));
+
+                    // if they match
+                    if (isMatched) {
+
+                        // create new bullet instance at the same position as the weapon's
+                        bullet = new Bullets(weapons[i].x, weapons[i].y, 10);
+                        bullets.push(bullet);
+
+                        // set the styling to default
+                        ingame_input_field.style.border = '1px solid black';
+
+                        // reset the input field to empty
+                        ingame_input_field.value = '';
+
+                        // increment the score
+                        score++;
+
+                        // re-render the score text on the screen
+                        showScoreInGame();
+                    }
+                }
+            }
+        });
+    }
+}
+
 // RESTRUCTURE STRINGS
 async function reconstructStrings(name) {
     
@@ -130,7 +179,13 @@ function getModifiedIndexNumber(on_page_num, switched) {
 }
 
 // DETECTING MOBILE DEVICES 
+function isMobile() {
 
+    if ( (typeof window.orientation !== "undefined") || 
+    ( navigator.userAgent.indexOf('IEMobile') !== -1 ) )  
+        return true;
+    else return false;
+}
 
 // WIKIPEDIA
 async function getWikipedia(param, turns) {
@@ -771,7 +826,7 @@ function listPages(total_plants, on_page_num, isSearched) {
 }
 
 // SHOW GAME ENTRY
-function showGameEntry(names, urls) {
+function showGameEntry(urls) {
 
     // pick a random icon
     const icon_url = urls[Math.floor(Math.random() * (urls.length))];
@@ -805,17 +860,19 @@ function showGamificationButton(names, urls) {
     // add a mouseup event listener to the buttons
     gameButton.addEventListener('mouseup', () => {
         
-        showGameEntry(names, urls);
+        showGameEntry(urls);
     });
     gameStartButton.addEventListener('mouseup', () => {
 
         // if the text field for username input is not empty
         if (username.value !== '') {
-
-            const PATH = './assets/game/game.html';
             
-            // re-direct to another javascript file
-            location.href = PATH;
+            //set the container to be fullscreen
+            game_entry.style.setProperty('transform', 'translate(0, 0)', 'important');
+            game_entry.style.setProperty('width', '100%', 'important');
+            game_entry.style.setProperty('height', '100%', 'important');
+
+            init(names, urls);
         }
     });
 }
@@ -1033,28 +1090,31 @@ async function getPlants(PAGE, on_page_num) {
 async function searchPlants(PAGE, on_page_num) {
 
     // pass the searched keyword to a global variable, so that later on, the search field will be emptied out
-    if (searched_title.value !== '') searched_keyword = searched_title.value;
+    if (searched_title.value !== '') {
+
+        searched_keyword = searched_title.value;
     
-    // create an options instance
-    const options = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-    
-    // make a request to the server side
-    const request = await fetch(`/search/${searched_keyword}/${PAGE}`, options);
-    const results = await request.json();
+        // create an options instance
+        const options = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        
+        // make a request to the server side
+        const request = await fetch(`/search/${searched_keyword}/${PAGE}`, options);
+        const results = await request.json();
 
-    // reset the text field to an empty string after search results come back
-    searched_title.value = '';
+        // reset the text field to an empty string after search results come back
+        searched_title.value = '';
 
-    // keep the search area focused after search
-    searched_title.focus();
+        // keep the search area focused after search
+        searched_title.focus();
 
-    // show the plants
-    showPlants(results, PAGE, on_page_num, true);
+        // show the plants
+        showPlants(results, PAGE, on_page_num, true);
+    }
 }
 
 // LOAD NECESSARRY FUNCTIONALITIES OF THE WEB APP AS SOON AS IT OPENS
@@ -1096,4 +1156,329 @@ window.onload = function() {
 
         }
     });
+
+    // global keyboard event listeners
+    // passing parameter is to wait for other programatically created DOM elements to form
+    escapeHit(false);
+}
+
+
+/////////////////////////////////
+// GAME
+////////////////////////////////
+
+// class(es)
+let weapons = [],
+    bullets = [],
+    insects = [],
+    imgDOM = [];
+
+// all paths to the images
+const PATHS = ['./assets/static_files/pesticide.png',
+                './assets/static_files/ant.png'];
+
+// windows properties settings
+let width = window.innerWidth,
+    height = window.innerHeight;
+
+// create a PIXI Application instance
+const app = new PIXI.Application({
+    width: width,
+    height: height,
+    backgroundColor: 'rgb(255, 255, 255)',
+    antialias: true,    // default: false
+    transparent: false, // default: false
+    resolution: 1       // default: 1
+});
+
+// game score
+let score = 0;
+
+// PIXI loader
+let loader = PIXI.Loader.shared;
+let gameOverScene = new PIXI.Container(),
+    gameScene = new PIXI.Container();
+    message = new PIXI.Text(score);
+
+// game state
+let state = null;
+
+function createLines(x1, y1, x2, y2, colour, thickness) {
+
+    let lines = new PIXI.Graphics();
+
+    // style the circle
+    lines.lineStyle(thickness, colour, 1);
+
+    // start point
+    lines.moveTo(x1, y1);
+
+    // end point
+    lines.lineTo(x2, y2);
+
+    // add the rect to the stage
+    gameScene.addChild(lines);
+}
+
+function drawWeapons(names, urls) {
+
+    // rows
+    const rows = 4;
+
+    for (let i = 0; i < rows; i++) {
+
+        // sizes
+        const size = 40;
+
+        // get evenly divided rows, divide that result by 2 to centre the item,
+        // increment it by i every iteration 
+        const x = (((width / rows) * i) + ((width / rows) * (i + 1))) / 2;
+
+        // y-coordinate
+        const y = height - (size * 5);
+
+        // a random value
+        const randIndex = Math.floor(Math.random() * urls.length);
+
+        // create instances of the weapon object
+        weapons[i] = new Weapons(x, y, size, size, names[randIndex], urls[randIndex], PATHS[0]);
+
+        // show all the instances
+        weapons[i].show();
+
+        // create and show instances of images corresponding to the weapons
+        imgDOM[i] = new Image();
+        imgDOM[i].className = 'ingame_plant_image';
+
+        weapons[i].showImg(imgDOM[i]);
+
+        // create lines that separate different rows
+        createLines(((width / rows) * i), height - 5, ((width / rows) * i), 0, 0xFFFFFF, 4);
+    }
+}
+
+function endGame() {
+
+    gameScene.visible = false;
+    gameOverScene.visible = true;
+    
+    // stop the loop
+    // app.ticker.stop();
+}
+
+function showEndGameBoard() {
+
+    ////////////////////////////
+    // REMOVE DOM ELEMENTS
+    ///////////////////////////
+    // grab all the in-game images
+    const IN_GAME_IMGS = document.querySelectorAll('.ingame_plant_image');
+    const IN_GAME_INPUT = document.getElementById('ingame_input_field');
+
+    // remove all of them
+    if (IN_GAME_IMGS.length > 0 && IN_GAME_INPUT !== null) {
+        removeElements(IN_GAME_IMGS);
+        removeElements([IN_GAME_INPUT]);
+    }
+
+    // create a board
+    let rect = new PIXI.Graphics();
+    
+    // style the rect
+    rect.beginFill('rgb(255, 255, 255)');
+    rect.drawRect(width/ 2, height / 2, width / 2);
+    rect.endFill();
+    gameOverScene.addChild(rect);
+
+    // create a new PIXI garphics instance
+    let style = new PIXI.TextStyle({
+        fontFamily: 'Montserrat',
+        fontSize: width / 25,
+        fill: 'white'
+      });
+    let message = new PIXI.Text('The End!' + '\n' + 'Your score is ' + score, style);
+    message.x = width / 10;
+    message.y = height / 2;
+    gameOverScene.addChild(message);
+}
+
+function showScoreInGame() {
+
+    let container = new PIXI.Container();
+
+    // create a new PIXI garphics instance
+    let style = new PIXI.TextStyle({
+        fontFamily: 'Montserrat',
+        fontSize: width / 50,
+        fill: 'white'
+      });
+
+    message.style = style;
+    message.text = score;
+    message.anchor.set(.5);
+    message.x = width / 2;
+    message.y = height / 2;
+    container.addChild(message);
+
+    gameScene.addChild(container);
+}
+
+function drawBullets() {
+
+    // loop through the bullets array backwards
+    for (let i = bullets.length - 1; i >= 0; i--) {
+
+        // show the bullet
+        bullets[i].load();
+
+        // fire it, if it gets offscreen
+        if (!bullets[i].fire()) {
+
+            // clear the shape display
+            bullets[i].shape.clear();
+
+            // remove it from the array
+            bullets.splice(i, 1);
+        }
+    }
+}
+
+function drawInsects() {
+
+    const randNum = Math.random() * 1;
+    const probability = 0.002;
+    if (randNum < probability) {
+
+        // choose random x coordinates to spawn the insects
+        const index = Math.floor(Math.random() * weapons.length);
+
+        const size = 40;
+
+        const y = -size;
+
+        // create instances of insects object and append them respectively to the array
+        insects.push(new Insects(weapons[index].x, y, size, size, PATHS[1]));
+    }
+
+    // loop through the array
+    for (let i = insects.length - 1; i >= 0; i--) {
+        insects[i].show();
+        insects[i].move();
+        
+        // loop through the bullets array
+        for (let j = bullets.length - 1; j >= 0; j--) {
+
+            // if an insect gets hit by a bullet
+            if (insects[i].hitBy(bullets[j])) {
+
+                // clear the shape display
+                bullets[j].shape.clear();
+
+                // remove the sprite from the container
+                insects[i].container.removeChild(insects[i].sprite);
+
+                // remove elements out of the arrays
+                bullets.splice(j, 1);
+                insects.splice(i, 1);
+            }
+        }
+
+        if (insects[i] !== undefined) {
+
+            // loop through the weapons array backwards
+            for (let w = weapons.length - 1; w >= 0; w--) {
+
+                // if a weapon gets hit by an insect
+                if (weapons[w].hitBy(insects[i])) {
+
+                    showEndGameBoard();
+
+                    // switch the game state to end the game
+                    state = endGame;
+                }
+            }
+        }
+    }
+}
+
+function playGame(delta) {
+    drawBullets();
+    drawInsects();
+}
+
+function gameLoop(delta) {
+    
+    state(delta);
+}
+
+// INITIALISE THE CODE
+function init(names, urls) {
+
+    // check if WebGL is supported in a user's browser
+    let type = "WebGL"
+    if(!PIXI.utils.isWebGLSupported()){
+        type = "canvas"
+    }
+
+    PIXI.utils.sayHello(type);
+
+    // set the game state to play
+    state = playGame;
+
+    // stylings
+    // app.renderer.backgroundColor = 0x061639;
+    app.renderer.view.style.position = 'absolute';
+    app.renderer.view.style.display = 'block';
+    app.renderer.view.style.width = '100%';
+    app.renderer.view.style.height = '100%';
+    app.renderer.view.style.top = '0px';
+    app.renderer.autoDensity = true;
+    app.renderer.resize(width, height);
+
+    // append the view to #game_entry
+    game_entry.appendChild(app.view);
+    
+    // create a text input field
+    const plant_name_input = document.createElement('input');
+    plant_name_input.type = 'text';
+    plant_name_input.placeholder = 'Type here!';
+    plant_name_input.id = 'ingame_input_field';
+    
+    // style the input field
+    plant_name_input.style.position = 'absolute';
+    plant_name_input.style.transform = 'translateX(-50%)';
+    plant_name_input.style.left = '50%';
+    plant_name_input.style.bottom = '5px';
+    plant_name_input.style.padding = '5px';
+
+    // override the width property with !important rule from the scss file
+    plant_name_input.style.setProperty('width', '20%', 'important');
+
+    // append the input field to #game_entry
+    game_entry.appendChild(plant_name_input);
+    escapeHit(true);
+
+    // focus on the text input field as soon as the game loop starts running
+    document.getElementById('ingame_input_field').focus();
+
+    // load all images exist in the current page using loader method from PIXI
+    loader
+        .add(PATHS)
+        .load(() => {
+            drawWeapons(names, urls);
+        });
+
+    // initialise the score
+    showScoreInGame();
+
+    // a game scene for playing the game and a game over scene for ending a gameplay added to the stage
+    app.stage.addChild(gameOverScene);
+    app.stage.addChild(gameScene);
+
+    // first, set the game over scene to be invisible
+    gameOverScene.visible = false;
+
+    //Start the game loop by adding the `gameLoop` function to
+    //Pixi's `ticker` and providing it with a `delta` argument.
+    app.ticker.add(delta => gameLoop(delta));
 }

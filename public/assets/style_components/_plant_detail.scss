@@ -194,6 +194,14 @@ $border-color:  #dee2e6;
                 background-color: rgb(56, 134, 56);
             }
         }
+
+        // in-game imgs
+        .ingame_plant_image {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            border-radius: 5px;
+            box-shadow: 2px 2px 10px snow;
+        }
     }
 }
 

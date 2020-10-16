@@ -224,6 +224,15 @@
   background-color: #388638;
 }
 
+#plant_detail_wrapper #game_entry .ingame_plant_image {
+  position: absolute;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  border-radius: 5px;
+  -webkit-box-shadow: 2px 2px 10px snow;
+          box-shadow: 2px 2px 10px snow;
+}
+
 /* width of the entire scrollbar */
 #table_wrapper::-webkit-scrollbar,
 #recipe_wrapper::-webkit-scrollbar {
@@ -568,7 +577,7 @@ nav #search #searchIcon:hover {
     -webkit-transform: translate(6%, 110%) !important;
             transform: translate(6%, 110%) !important;
   }
-  #game_entry input[type='text'] {
+  #entry_info input[type='text'] {
     margin: 0 !important;
   }
 }
