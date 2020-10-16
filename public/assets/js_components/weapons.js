@@ -87,15 +87,15 @@ class Weapons {
         imgDOM.style.height = img_h + 'px';
         game_entry.appendChild(imgDOM);
         
-        // add a global pointerover event listener to the imgs
-        imgDOM.addEventListener('pointerover', () => {
+        // add a global mouseover event listener to the imgs
+        imgDOM.addEventListener('mouseover', () => {
             
             // show the name of a plant
             this.showPlantName(true);
         })
 
-        // add a global pointerout event listener to the imgs
-        imgDOM.addEventListener('pointerout', () => {
+        // add a global mouseout event listener to the imgs
+        imgDOM.addEventListener('mouseout', () => {
             
             // hide the name of a plant
             this.showPlantName(false);

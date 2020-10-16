@@ -57,7 +57,7 @@ function escapeHit(inGame) {
                         score++;
 
                         // re-render the score text on the screen
-                        showScoreInGame();
+                        showScoreInGame(1);
                     }
                 }
             }
@@ -1253,8 +1253,11 @@ function drawWeapons(names, urls) {
         weapons[i].showImg(imgDOM[i]);
 
         // create lines that separate different rows
-        createLines(((width / rows) * i), height - 5, ((width / rows) * i), 0, 0xFFFFFF, 4);
+        createLines(((width / rows) * i), height - 5, ((width / rows) * i), 0, 0xFFFF99, 4);
     }
+
+    // initialise the score
+    showScoreInGame(0);
 }
 
 function endGame() {
@@ -1302,24 +1305,49 @@ function showEndGameBoard() {
     gameOverScene.addChild(message);
 }
 
-function showScoreInGame() {
+function showScoreInGame(cnt) {
 
     let container = new PIXI.Container();
+
+    if (cnt === 0) {
+
+        let rect = new PIXI.Graphics();
+
+        // rect properties
+        const x = width / 2,
+            y = height / 2,
+            w = width / 10,
+            h = height / 10;
+        rect.pivot.set(w / 2, h / 2);
+        rect.lineStyle(0, 0xFF00FF, 1);
+        rect.beginFill(0xFFFF33, 0.75);
+        rect.drawRoundedRect(x, y, w, h, 15);
+        rect.endFill();
+        container.addChild(rect);
+    }
 
     // create a new PIXI garphics instance
     let style = new PIXI.TextStyle({
         fontFamily: 'Montserrat',
         fontSize: width / 50,
-        fill: 'white'
-      });
+        fill: 'black'
+    });
 
+    // style the message
     message.style = style;
+
+    // reassign the text (increased score)
     message.text = score;
+
+    // position the text
     message.anchor.set(.5);
     message.x = width / 2;
     message.y = height / 2;
+
+    // add it to the container
     container.addChild(message);
 
+    // add the container to the game scene
     gameScene.addChild(container);
 }
 
@@ -1467,9 +1495,6 @@ function init(names, urls) {
         .load(() => {
             drawWeapons(names, urls);
         });
-
-    // initialise the score
-    showScoreInGame();
 
     // a game scene for playing the game and a game over scene for ending a gameplay added to the stage
     app.stage.addChild(gameOverScene);

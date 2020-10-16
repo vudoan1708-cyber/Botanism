@@ -45,3 +45,39 @@ html {
       font-size: 2vw;
     }
 }
+
+/* width of the entire scrollbar */
+::-webkit-scrollbar,
+::-webkit-scrollbar { /* Chrome/Opera/Safari */
+    width: 5px;
+}
+::-moz-scrollbar,
+::-webkit-scrollbar { /* Firefox 19+ */
+    width: 5px;
+}
+
+/* color of the tracking area */
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-track {
+    border-radius: 20px;
+    background: #e9f16cf1;
+}
+::-moz-scrollbar-track,
+::-webkit-scrollbar-track {
+    border-radius: 20px;
+    background: #e9f16cf1;
+}
+
+/* scrollbar thumb */
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+    background-color: $bg-color;    /* color of the scroll thumb */
+    border-radius: 20px;       /* roundness of the scroll thumb */
+    border: 2px solid rgb(41, 39, 39);  /* creates padding around scroll thumb */
+}
+::-moz-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+    background-color: $bg-color;    /* color of the scroll thumb */
+    border-radius: 20px;       /* roundness of the scroll thumb */
+    border: 2px solid rgb(41, 39, 39);  /* creates padding around scroll thumb */
+}

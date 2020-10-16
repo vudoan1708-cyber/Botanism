@@ -204,39 +204,3 @@ $border-color:  #dee2e6;
         }
     }
 }
-
-/* width of the entire scrollbar */
-#table_wrapper::-webkit-scrollbar,
-#recipe_wrapper::-webkit-scrollbar { /* Chrome/Opera/Safari */
-    width: 5px;
-}
-#table_wrapper::-moz-scrollbar,
-#recipe_wrapper::-webkit-scrollbar { /* Firefox 19+ */
-    width: 5px;
-}
-
-/* color of the tracking area */
-#table_wrapper::-webkit-scrollbar-track,
-#recipe_wrapper::-webkit-scrollbar-track {
-    border-radius: 20px;
-    background: #e9f16cf1;
-}
-#table_wrapper::-moz-scrollbar-track,
-#recipe_wrapper::-webkit-scrollbar-track {
-    border-radius: 20px;
-    background: #e9f16cf1;
-}
-
-/* scrollbar thumb */
-#table_wrapper::-webkit-scrollbar-thumb,
-#recipe_wrapper::-webkit-scrollbar-thumb {
-    background-color: $bg-color;    /* color of the scroll thumb */
-    border-radius: 20px;       /* roundness of the scroll thumb */
-    border: 2px solid rgb(41, 39, 39);  /* creates padding around scroll thumb */
-}
-#table_wrapper::-moz-scrollbar-thumb,
-#recipe_wrapper::-webkit-scrollbar-thumb {
-    background-color: $bg-color;    /* color of the scroll thumb */
-    border-radius: 20px;       /* roundness of the scroll thumb */
-    border: 2px solid rgb(41, 39, 39);  /* creates padding around scroll thumb */
-}

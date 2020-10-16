@@ -233,53 +233,6 @@
           box-shadow: 2px 2px 10px snow;
 }
 
-/* width of the entire scrollbar */
-#table_wrapper::-webkit-scrollbar,
-#recipe_wrapper::-webkit-scrollbar {
-  /* Chrome/Opera/Safari */
-  width: 5px;
-}
-
-#table_wrapper::-moz-scrollbar,
-#recipe_wrapper::-webkit-scrollbar {
-  /* Firefox 19+ */
-  width: 5px;
-}
-
-/* color of the tracking area */
-#table_wrapper::-webkit-scrollbar-track,
-#recipe_wrapper::-webkit-scrollbar-track {
-  border-radius: 20px;
-  background: #e9f16cf1;
-}
-
-#table_wrapper::-moz-scrollbar-track,
-#recipe_wrapper::-webkit-scrollbar-track {
-  border-radius: 20px;
-  background: #e9f16cf1;
-}
-
-/* scrollbar thumb */
-#table_wrapper::-webkit-scrollbar-thumb,
-#recipe_wrapper::-webkit-scrollbar-thumb {
-  background-color: black;
-  /* color of the scroll thumb */
-  border-radius: 20px;
-  /* roundness of the scroll thumb */
-  border: 2px solid #292727;
-  /* creates padding around scroll thumb */
-}
-
-#table_wrapper::-moz-scrollbar-thumb,
-#recipe_wrapper::-webkit-scrollbar-thumb {
-  background-color: black;
-  /* color of the scroll thumb */
-  border-radius: 20px;
-  /* roundness of the scroll thumb */
-  border: 2px solid #292727;
-  /* creates padding around scroll thumb */
-}
-
 #windowProperties {
   position: relative;
   background: rgba(219, 224, 219, 0.1);
@@ -623,5 +576,52 @@ html #guess_game_button:hover {
   html {
     font-size: 2vw;
   }
+}
+
+/* width of the entire scrollbar */
+::-webkit-scrollbar,
+::-webkit-scrollbar {
+  /* Chrome/Opera/Safari */
+  width: 5px;
+}
+
+::-moz-scrollbar,
+::-webkit-scrollbar {
+  /* Firefox 19+ */
+  width: 5px;
+}
+
+/* color of the tracking area */
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-track {
+  border-radius: 20px;
+  background: #e9f16cf1;
+}
+
+::-moz-scrollbar-track,
+::-webkit-scrollbar-track {
+  border-radius: 20px;
+  background: #e9f16cf1;
+}
+
+/* scrollbar thumb */
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+  background-color: black;
+  /* color of the scroll thumb */
+  border-radius: 20px;
+  /* roundness of the scroll thumb */
+  border: 2px solid #292727;
+  /* creates padding around scroll thumb */
+}
+
+::-moz-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+  background-color: black;
+  /* color of the scroll thumb */
+  border-radius: 20px;
+  /* roundness of the scroll thumb */
+  border: 2px solid #292727;
+  /* creates padding around scroll thumb */
 }
 /*# sourceMappingURL=styles.css.map */
