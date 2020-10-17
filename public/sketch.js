@@ -833,6 +833,17 @@ function showGameEntry(urls) {
 
 // BUTTONS FOR GAMIFICATIONS SECTION
 function showGamificationButton(names, urls) {
+
+    //////////////////////////
+    // REMOVE OLD BUTTONS
+    /////////////////////////
+    const old_gameStartButton = document.getElementById('start_game_button'),
+          old_gameButton = document.getElementById('guess_game_button');
+    if (old_gameStartButton !== null && old_gameButton !== null) {
+        removeElements([old_gameStartButton]);
+        removeElements([old_gameButton]);
+    }
+    
     
     // create a button
     const gameButton = document.createElement('div'),
@@ -846,7 +857,7 @@ function showGamificationButton(names, urls) {
     gameButton.id = 'guess_game_button';
 
     // insert text
-    gameButton.innerHTML = 'Guess A Plant';
+    gameButton.innerHTML = 'Guess The Plants';
 
     // append it next to the pages div tag as a next sibling element
     pages.parentNode.insertBefore(gameButton, pages.nextSibling);
@@ -1228,9 +1239,21 @@ function duplicatesCheck(duplicates, urls) {
         // run through an array to check duplicates
         for (let i = 0; i < duplicates.length; i++) {
 
+            // if the index is different to the array
             if (duplicates[i] !== index) {
-                return index;
-            } else return '';
+
+                // wait till the iteration reaches the last element to check every one in the array
+                if (i === duplicates.length - 1)
+
+                    // return the value
+                    return index;
+
+            // otherwise, if it's the same number
+            } else {
+
+                // return an empty string immediately
+                return '';
+            }
         }
     }
 }
@@ -1260,8 +1283,8 @@ function drawWeapons(names, urls) {
         const y = height - (size * 5);
 
         // a random value and check for duplicates
-        const randIndex = duplicatesCheck(duplicates, urls); 
-        
+        const randIndex = duplicatesCheck(duplicates, urls);
+
         // if the returned value is a number
         if (typeof(randIndex) === 'number') {
 
@@ -1285,8 +1308,6 @@ function drawWeapons(names, urls) {
 
             // increment i
             i++;
-        } else {
-            console.log(typeof(randIndex));
         }
     }
 
@@ -1298,7 +1319,7 @@ function endGame() {
 
     gameScene.visible = false;
     gameOverScene.visible = true;
-    
+
     // stop the loop
     // app.ticker.stop();
 }
@@ -1331,100 +1352,108 @@ function createTriangle(xPos, yPos, btn_container, colour) {
 
 function showEndGameDetail(fillState, fillState2, cnt) {
 
-    ////////////////////////////
-    // REMOVE DOM ELEMENTS
-    ///////////////////////////
+    if (cnt !== 100) {
 
-    // grab all the in-game images
-    const IN_GAME_IMGS = document.querySelectorAll('.ingame_plant_image');
-    const IN_GAME_INPUT = document.getElementById('ingame_input_field');
+        ////////////////////////////
+        // REMOVE DOM ELEMENTS
+        ///////////////////////////
 
-    // remove all of them
-    if (IN_GAME_IMGS.length > 0 && IN_GAME_INPUT !== null) {
-        removeElements(IN_GAME_IMGS);
-        removeElements([IN_GAME_INPUT]);
-    }
+        // grab all the in-game images
+        const IN_GAME_IMGS = document.querySelectorAll('.ingame_plant_image');
+        const IN_GAME_INPUT = document.getElementById('ingame_input_field');
 
-    //////////////////////////////
-    // CREATE ELEMENTS
-    /////////////////////////////
+        // remove all of them
+        if (IN_GAME_IMGS.length > 0 && IN_GAME_INPUT !== null) {
+            removeElements(IN_GAME_IMGS);
+            removeElements([IN_GAME_INPUT]);
+        }
 
-    // create a container
-    let btn_container = new PIXI.Container();
-    btn_container.interactive = true;
+        //////////////////////////////
+        // CREATE ELEMENTS
+        /////////////////////////////
 
-    // create a button to navigate out of the game canvas
-    let back_btn = new PIXI.Graphics(),
-        btn_noFill = new PIXI.Graphics();
+        // create a container
+        let btn_container = new PIXI.Container();
+        btn_container.interactive = true;
 
-    // clear 
-    btn_noFill.clear();
-    back_btn.clear();
+        // create a button to navigate out of the game canvas
+        let back_btn = new PIXI.Graphics(),
+            btn_noFill = new PIXI.Graphics();
 
-    // a circle with no fills
-    btn_noFill.lineStyle(2, 0x00FF00, 1);
-    btn_noFill.beginFill(fillState);
-    btn_noFill.drawCircle(width - width / 4, height / 2 + width / 25, width / 25);
-    btn_noFill.endFill();
+        // clear 
+        btn_noFill.clear();
+        back_btn.clear();
 
-    // add it to the container
-    btn_container.addChild(btn_noFill);
+        // a circle with no fills
+        btn_noFill.lineStyle(2, 0x00FF00, 1);
+        btn_noFill.beginFill(fillState);
+        btn_noFill.drawCircle(width - width / 4, height / 2 + width / 25, width / 25);
+        btn_noFill.endFill();
 
-    // a circle with fills
-    back_btn.lineStyle(2, 0x0, 1);
-    back_btn.beginFill(0x90EE90);
-    back_btn.drawCircle(width - width / 4, height / 2 + width / 25, width / 40);
-    back_btn.endFill();
+        // add it to the container
+        btn_container.addChild(btn_noFill);
 
-    // add it to the container
-    btn_container.addChild(back_btn);
+        // a circle with fills
+        back_btn.lineStyle(2, 0x0, 1);
+        back_btn.beginFill(0x90EE90);
+        back_btn.drawCircle(width - width / 4, height / 2 + width / 25, width / 40);
+        back_btn.endFill();
 
-    // add a mouseover event listener to the container when on hovered
-    btn_container.on('mouseover', () => {
-        showEndGameDetail(0x488214, 0x397D02, 1);
-    });
+        // add it to the container
+        btn_container.addChild(back_btn);
 
-    // add a mouseout event listener to the container when not hovered
-    btn_container.on('mouseout', () => {
-        showEndGameDetail(0x1A1702, 0x696969, 1);
-    });
-
-    // add a pointer event listener to the container when a pointer registered on it
-    btn_container.on('pointerdown', () => {
-
-        // show the game start button
-        document.getElementById('start_game_button').style.visibility = 'visible';
-            
-        // reset back to the css styling default
-        game_entry.style.setProperty('transform', '', 'important');
-        game_entry.style.setProperty('width', '', 'important');
-        game_entry.style.setProperty('height', '', 'important');
-
-        const game_canvas = document.getElementsByTagName('canvas');
-        
-        game_canvas[game_canvas.length - 1].style.setProperty('display', 'none', 'important');
-
-        app.stage.removeChildren();
-    });
-
-    // create a triangle
-    createTriangle(width - width / 4, height / 2 + width / 25, btn_container, fillState2);
-
-    // add the container to the gameOverScene container
-    gameOverScene.addChild(btn_container);
-
-    if (cnt === 0) {
-
-        // create a new PIXI garphics instance
-        let style = new PIXI.TextStyle({
-            fontFamily: 'Montserrat',
-            fontSize: width / 25,
-            fill: 'white'
+        // add a mouseover event listener to the container when on hovered
+        btn_container.on('mouseover', () => {
+            showEndGameDetail(0x488214, 0x397D02, 1);
         });
-        let message = new PIXI.Text('The End!' + '\n' + 'Your score is ' + score, style);
-        message.x = width / 10;
-        message.y = height / 2;
-        gameOverScene.addChild(message);
+
+        // add a mouseout event listener to the container when not hovered
+        btn_container.on('mouseout', () => {
+            showEndGameDetail(0x1A1702, 0x696969, 1);
+        });
+
+        // add a pointer event listener to the container when a pointer registered on it
+        btn_container.on('pointerdown', () => {
+
+            // show the game start button
+            document.getElementById('start_game_button').style.visibility = 'visible';
+                
+            // reset back to the css styling default
+            game_entry.style.setProperty('transform', '', 'important');
+            game_entry.style.setProperty('width', '', 'important');
+            game_entry.style.setProperty('height', '', 'important');
+
+            const game_canvas = document.getElementsByTagName('canvas');
+            
+            game_canvas[game_canvas.length - 1].style.setProperty('display', 'none', 'important');
+
+            // app.stage.removeChildren();
+        });
+
+        // create a triangle
+        createTriangle(width - width / 4, height / 2 + width / 25, btn_container, fillState2);
+
+        // add the container to the gameOverScene container
+        gameOverScene.addChild(btn_container);
+
+        if (cnt === 0) {
+
+            // create a new PIXI garphics instance
+            let style = new PIXI.TextStyle({
+                fontFamily: 'Montserrat',
+                fontSize: width / 25,
+                fill: 'white'
+            });
+            let message = new PIXI.Text('The End!' + '\n' + 'Your score is ' + score, style);
+            message.x = width / 10;
+            message.y = height / 2;
+            gameOverScene.addChild(message);
+        }
+    } else  {
+
+        // clear 
+        btn_noFill.clear();
+        back_btn.clear();
     }
 }
 
@@ -1549,8 +1578,16 @@ function drawInsects() {
                 // if a weapon gets hit by an insect
                 if (weapons[w].hitBy(insects[i])) {
 
-                    showEndGameDetail(0x1A1702, 0x696969, 0);
+                    // remove the sprite from the container
+                    weapons[w].container.removeChild(weapons[w].sprite);
+                    insects[i].container.removeChild(insects[i].sprite);
 
+                    // remove elements out of the arrays
+                    weapons.splice(w, 1);
+                    insects.splice(i, 1);
+
+                    showEndGameDetail(0x1A1702, 0x696969, 0);
+                    
                     // switch the game state to end the game
                     state = endGame;
                 }
@@ -1569,8 +1606,37 @@ function gameLoop(delta) {
     state(delta);
 }
 
+// RESET GAME LOOP
+function resetGameProperties() {
+    
+    // make sure the score is set back to 0
+    score = 0;
+
+    insects.forEach(insect => {
+        insect.container.removeChild(insect.sprite);
+    });
+
+    // reset the insects array
+    insects = [];
+
+    // remove all the children elements of game over scene
+    weapons.forEach(weapon => {
+        weapon.showPlantName(false);
+        weapon.container.removeChild(weapon.sprite);
+    });
+
+    gameOverScene.removeChildren();
+
+    // reset the loader
+    loader.reset();
+    PIXI.utils.clearTextureCache();
+}
+
 // INITIALISE THE CODE
 function init(names, urls) {
+
+    // if a user wants to play the game again, reset all the properties that were run during the previous loop
+    resetGameProperties();
 
     // check if WebGL is supported in a user's browser
     let type = "WebGL"
@@ -1629,6 +1695,9 @@ function init(names, urls) {
     // a game scene for playing the game and a game over scene for ending a gameplay added to the stage
     app.stage.addChild(gameOverScene);
     app.stage.addChild(gameScene);
+
+    // set game scene and game over scene to default visibility
+    gameScene.visible = true;
 
     // first, set the game over scene to be invisible
     gameOverScene.visible = false;

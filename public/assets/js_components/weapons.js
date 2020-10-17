@@ -9,26 +9,31 @@ class Weapons {
         this.plant_name = plant_name.toLowerCase().replace(/^\s+|\s+$/g, '');
         this.img = img;
         this.local_img = local_img;
+
+        // pixi properties
         this.message = new PIXI.Text(this.plant_name);
+        this.container = new PIXI.Container();
+        this.texture = loader.resources[this.local_img].texture;
+        this.sprite = new PIXI.Sprite(this.texture);
     }
 
     show() {
-
-        let texture = loader.resources[this.local_img].texture;
-        let sprite = new PIXI.Sprite(texture);
         
         // position the sprite
-        sprite.position.set(this.x, this.y);
-        sprite.width = this.w;
-        sprite.height = this.h;
+        this.sprite.position.set(this.x, this.y);
+        this.sprite.width = this.w;
+        this.sprite.height = this.h;
 
         // rectMode CENTER equivalent of p5.js
         // however, this has to be after the styling for some unknown reasons
-        sprite.anchor.x = .5;
-        sprite.anchor.y = .5;
+        this.sprite.anchor.x = .5;
+        this.sprite.anchor.y = .5;
 
-        // add the rect to the stage
-        gameScene.addChild(sprite);
+        // add the sprite to the container
+        this.container.addChild(this.sprite)
+
+        // add the container to the game scene container
+        gameScene.addChild(this.container);
     }
 
     showPlantName(hovered) {
