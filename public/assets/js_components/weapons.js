@@ -42,10 +42,10 @@ class Weapons {
         let style = new PIXI.TextStyle({
             fontFamily: 'Montserrat',
             align: 'center',
-            fontSize: width / 50,
+            fontSize: width / 42,
             fill: 'white',
             stroke: '#ff3300',
-            strokeThickness: 4,
+            strokeThickness: 2,
             dropShadow: true,
             dropShadowColor: '#000000',
             dropShadowBlur: 4,
@@ -56,13 +56,12 @@ class Weapons {
         this.message.style = style;
 
         this.message.position.set(this.x, this.y + this.h / 2);
-        this.message.anchor.set(0.5);
+        this.message.anchor.set(.5);
 
         if (hovered) {
             gameScene.addChild(this.message);
         } else gameScene.removeChild(this.message);
     }
-
 
     showImg(imgDOM) {
 
@@ -97,14 +96,36 @@ class Weapons {
             
             // show the name of a plant
             this.showPlantName(true);
-        })
+        });
 
         // add a global mouseout event listener to the imgs
         imgDOM.addEventListener('mouseout', () => {
             
             // hide the name of a plant
             this.showPlantName(false);
-        })
+        });
+
+        // for mobile
+        if (isMobile()) {
+
+            // add a global mouseout event listener to the imgs
+            imgDOM.addEventListener('touchstart', () => {
+
+                // show the name of a plant
+                this.showPlantName(true);
+
+                // fill in the text field automatically
+                ingame_input_field.value = this.plant_name;
+                
+                if (this.compare(this.plant_name)) {
+                    
+                    loadBullet();
+
+                    // reset the text field back to an empty string
+                    ingame_input_field.value = '';
+                }
+            });
+        }
     }
 
     compare(input) {

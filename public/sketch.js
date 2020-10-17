@@ -16,6 +16,30 @@ let myChart = null;
 let navigatingIndex = 0;
 let searched_keyword = '';
 
+// LOAD BULLET IN GAME
+function loadBullet() {
+
+    for (let i = 0; i < weapons.length; i++) {
+
+        // compare the input string and the plant name
+        const isMatched = weapons[i].compare(ingame_input_field.value.toLowerCase().replace(/^\s+|\s+$/g, ''));
+
+        // if they match
+        if (isMatched) {
+
+            // create new bullet instance at the same position as the weapon's
+            let bullet = new Bullets(weapons[i].x, weapons[i].y, 10);
+            bullets.push(bullet);
+
+            // set the styling to default
+            ingame_input_field.style.border = '1px solid black';
+
+            // reset the input field to empty
+            ingame_input_field.value = '';
+        }
+    }
+}
+
 // ADD A GLOBAL KEYBOARD LISTENER
 function escapeHit(inGame) {
 
@@ -35,25 +59,7 @@ function escapeHit(inGame) {
             
             if (e.key === 'Enter') {
 
-                for (let i = 0; i < weapons.length; i++) {
-
-                    // compare the input string and the plant name
-                    const isMatched = weapons[i].compare(ingame_input_field.value.toLowerCase().replace(/^\s+|\s+$/g, ''));
-
-                    // if they match
-                    if (isMatched) {
-
-                        // create new bullet instance at the same position as the weapon's
-                        bullet = new Bullets(weapons[i].x, weapons[i].y, 10);
-                        bullets.push(bullet);
-
-                        // set the styling to default
-                        ingame_input_field.style.border = '1px solid black';
-
-                        // reset the input field to empty
-                        ingame_input_field.value = '';
-                    }
-                }
+                loadBullet();
             }
         });
     }
@@ -844,6 +850,7 @@ function showGamificationButton(names, urls) {
         removeElements([old_gameButton]);
     }
     
+    let turns = -1;
     
     // create a button
     const gameButton = document.createElement('div'),
@@ -880,7 +887,8 @@ function showGamificationButton(names, urls) {
             game_entry.style.setProperty('width', '100%', 'important');
             game_entry.style.setProperty('height', '100%', 'important');
 
-            init(names, urls);
+            turns++;
+            init(names, urls, turns);
         }
     });
 }
@@ -1117,8 +1125,11 @@ async function searchPlants(PAGE, on_page_num) {
         // reset the text field to an empty string after search results come back
         searched_title.value = '';
 
-        // keep the search area focused after search
-        searched_title.focus();
+        // only if it's not mobile
+        if (!isMobile())
+
+            // keep the search area focused after search
+            searched_title.focus();
 
         // show the plants
         showPlants(results, PAGE, on_page_num, true);
@@ -1183,7 +1194,8 @@ let weapons = [],
 
 // all paths to the images
 const PATHS = ['./assets/static_files/pesticide.png',
-                './assets/static_files/ant.png'];
+                './assets/static_files/ant.png',
+                './assets/static_files/spider.png'];
 
 // windows properties settings
 let width = window.innerWidth,
@@ -1472,8 +1484,8 @@ function showScoreInGame(cnt) {
             w = width / 10,
             h = height / 10;
         rect.pivot.set(w / 2, h / 2);
-        rect.lineStyle(0, 0xFF00FF, 1);
-        rect.beginFill(0xFFFF33, 0.75);
+        rect.lineStyle(4, 0xFFFF99, 1);
+        rect.beginFill(0xFFFF33, 1);
         rect.drawRoundedRect(x, y, w, h, 15);
         rect.endFill();
         container.addChild(rect);
@@ -1482,7 +1494,7 @@ function showScoreInGame(cnt) {
     // create a new PIXI garphics instance
     let style = new PIXI.TextStyle({
         fontFamily: 'Montserrat',
-        fontSize: width / 50,
+        fontSize: width / 30,
         fill: 'black'
     });
 
@@ -1524,10 +1536,64 @@ function drawBullets() {
     }
 }
 
+// ERROR HANDLING
+function errHandling() {
+
+    // end the game loop, reset all properties
+    resetGameProperties();
+    endGame();
+
+    // create a div tag to inform an occuring error to the user
+    const errDiv = document.createElement('div');
+
+    // style it
+    errDiv.style.position = 'absolute';
+    errDiv.style.top = '50%';
+    errDiv.style.transform = 'translateY(-50%)';
+    errDiv.style.width = '100%';
+    errDiv.style.padding = '15px';
+    errDiv.style.backgroundColor = 'rgba(255, 0, 0, 0.75)';
+    errDiv.style.color = 'rgba(255, 255, 255, 0.75)';
+
+    errDiv.innerHTML = 'There is something wrong with the web workflow.' + '<br />' +
+                        'Please wait for a minute and try again!!!';
+
+    game_entry.appendChild(errDiv);
+
+    // path to the refresh image
+    const PATH = './assets/static_files/refresh.png';
+
+    // create an image tag for a refresh button
+    const refreshButton = new Image();
+    refreshButton.src = PATH;
+
+    // style it
+    refreshButton.style.position = 'absolute';
+    refreshButton.style.bottom = '15%';
+    refreshButton.style.left = '50%';
+    refreshButton.style.transform = 'translate(-50%, -50%)';
+    refreshButton.style.width = '8%';
+    refreshButton.style.cursor = 'pointer';
+
+    // add an event listener to the button
+    refreshButton.addEventListener('pointerdown', () => {
+        refreshButton.style.visibility = 'hidden';
+        location.reload();
+    });
+
+    game_entry.appendChild(refreshButton);
+}
+
 function drawInsects() {
 
     const randNum = Math.random() * 1;
-    const probability = 0.002;
+
+    let probability = 0.002;
+
+    // if user scores more than 5 points, increase the difficulty
+    if (score > 5) 
+        probability = 0.002 + score / 2000;
+
     if (randNum < probability) {
 
         // choose random x coordinates to spawn the insects
@@ -1538,12 +1604,17 @@ function drawInsects() {
         const y = -size;
 
         // create instances of insects object and append them respectively to the array
-        insects.push(new Insects(weapons[index].x, y, size, size, PATHS[1]));
+        insects.push(new Insects(weapons[index].x, y, size, size, PATHS[1], PATHS[2]));
     }
 
     // loop through the array
     for (let i = insects.length - 1; i >= 0; i--) {
-        insects[i].show();
+
+        if (score > 10) {
+            insects[i].showSpiders();
+            insects[i].vel = 1.5;
+        } else
+            insects[i].show();
         insects[i].move();
         
         // loop through the bullets array
@@ -1575,21 +1646,29 @@ function drawInsects() {
             // loop through the weapons array backwards
             for (let w = weapons.length - 1; w >= 0; w--) {
 
-                // if a weapon gets hit by an insect
-                if (weapons[w].hitBy(insects[i])) {
+                // check if insects[i] is not undefined
+                if (insects[i] !== undefined) {
 
-                    // remove the sprite from the container
-                    weapons[w].container.removeChild(weapons[w].sprite);
-                    insects[i].container.removeChild(insects[i].sprite);
+                    // if a weapon gets hit by an insect
+                    if (weapons[w].hitBy(insects[i])) {
 
-                    // remove elements out of the arrays
-                    weapons.splice(w, 1);
-                    insects.splice(i, 1);
+                        // remove the sprite from the container
+                        weapons[w].container.removeChild(weapons[w].sprite);
+                        insects[i].container.removeChild(insects[i].sprite);
 
-                    showEndGameDetail(0x1A1702, 0x696969, 0);
-                    
-                    // switch the game state to end the game
-                    state = endGame;
+                        // remove elements out of the arrays
+                        weapons.splice(w, 1);
+                        insects.splice(i, 1);
+
+                        showEndGameDetail(0x1A1702, 0x696969, 0);
+                        
+                        // switch the game state to end the game
+                        state = endGame;
+                    }
+
+                } else {
+                    errHandling();
+                    break;
                 }
             }
         }
@@ -1612,20 +1691,17 @@ function resetGameProperties() {
     // make sure the score is set back to 0
     score = 0;
 
-    insects.forEach(insect => {
-        insect.container.removeChild(insect.sprite);
-    });
-
     // reset the insects array
     insects = [];
 
-    // remove all the children elements of game over scene
-    weapons.forEach(weapon => {
-        weapon.showPlantName(false);
-        weapon.container.removeChild(weapon.sprite);
-    });
+    weapons = [];
 
+    // remove all elements from the game scene and game over scene
     gameOverScene.removeChildren();
+    gameScene.removeChildren();
+
+    // then remove them from the stage 
+    app.stage.removeChildren();
 
     // reset the loader
     loader.reset();
@@ -1633,7 +1709,7 @@ function resetGameProperties() {
 }
 
 // INITIALISE THE CODE
-function init(names, urls) {
+function init(names, urls, turns) {
 
     // if a user wants to play the game again, reset all the properties that were run during the previous loop
     resetGameProperties();
@@ -1682,8 +1758,11 @@ function init(names, urls) {
     game_entry.appendChild(plant_name_input);
     escapeHit(true);
 
-    // focus on the text input field as soon as the game loop starts running
-    document.getElementById('ingame_input_field').focus();
+    // only if it's not mobile
+    if (!isMobile())
+
+        // focus on the text input field as soon as the game loop starts running
+        document.getElementById('ingame_input_field').focus();
 
     // load all images exist in the current page using loader method from PIXI
     loader
@@ -1702,7 +1781,11 @@ function init(names, urls) {
     // first, set the game over scene to be invisible
     gameOverScene.visible = false;
 
+    // set this to run ONLY ONCE at the beginning, in case a user ever plays the game again
+    // the code, then won't trigger the app ticker more than once to keep the frame rate normal
+    if (turns === 0)
+
     //Start the game loop by adding the `gameLoop` function to
     //Pixi's `ticker` and providing it with a `delta` argument.
-    app.ticker.add(delta => gameLoop(delta));
+        app.ticker.add(delta => gameLoop(delta));
 }
