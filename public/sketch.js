@@ -52,12 +52,6 @@ function escapeHit(inGame) {
 
                         // reset the input field to empty
                         ingame_input_field.value = '';
-
-                        // increment the score
-                        score++;
-
-                        // re-render the score text on the screen
-                        showScoreInGame(1);
                     }
                 }
             }
@@ -253,13 +247,13 @@ function nextPrevButtons(recipe) {
                 if (navigatingIndex > 0) {
                     navigatingIndex--;
                     recipe_wrapper.scrollTo({ top: 0, behavior: 'smooth' });
-                    chartData(null, null, null, 1);
+                    chartData(null, null, 1);
                     showRecipe(recipe);
                 }
                 else {
                     navigatingIndex = 0;
                     recipe_wrapper.scrollTop = 0;
-                    chartData(null, null, null, 1);
+                    chartData(null, null, 1);
                     showRecipe(recipe);
                 }
             })) :
@@ -274,7 +268,7 @@ function nextPrevButtons(recipe) {
                 if (navigatingIndex < max) {
                     navigatingIndex++;
                     recipe_wrapper.scrollTop = 0;
-                    chartData(null, null, null, 1);
+                    chartData(null, null, 1);
                     showRecipe(recipe);
                 }
             })) :
@@ -285,7 +279,7 @@ function nextPrevButtons(recipe) {
     }
 }
 
-function chartData(total_vals, Xlabels, daily_vals, num_case) {
+function chartData(total_vals, Xlabels, num_case) {
 
     // destroy old charts to avoid glitchy effects
     // from overlaying charts created by creating instances of charts
@@ -432,7 +426,7 @@ function showRecipe(recipe) {
 
         // draw a chart with the total number of recipes,
         // all recipe's total values, all the corresponding labels, and healthy daily consumption of the nutrients
-        chartData(nutrients_values, nutrients_labels, nutrients_daily, 2);
+        chartData(nutrients_values, nutrients_labels, 2);
     }
 }
 
@@ -866,8 +860,11 @@ function showGamificationButton(names, urls) {
 
         // if the text field for username input is not empty
         if (username.value !== '') {
+
+            // hide the game start button
+            gameStartButton.style.visibility = 'hidden';
             
-            //set the container to be fullscreen
+            // set the container to be fullscreen
             game_entry.style.setProperty('transform', 'translate(0, 0)', 'important');
             game_entry.style.setProperty('width', '100%', 'important');
             game_entry.style.setProperty('height', '100%', 'important');
@@ -1144,7 +1141,7 @@ window.onload = function() {
             document.querySelector('.chartjs-size-monitor') !== null ? 
 
                 // if there is, destroy the chart
-                (chartData(null, null, null, 1), 
+                (chartData(null, null, 1), 
                 
                 // and get rid of the h4 tags and the nav buttons
                 removeElements(document.getElementsByTagName('h4')),
@@ -1185,7 +1182,7 @@ let width = window.innerWidth,
 const app = new PIXI.Application({
     width: width,
     height: height,
-    backgroundColor: 'rgb(255, 255, 255)',
+    backgroundColor: 0x1A1702,
     antialias: true,    // default: false
     transparent: false, // default: false
     resolution: 1       // default: 1
@@ -1220,12 +1217,37 @@ function createLines(x1, y1, x2, y2, colour, thickness) {
     gameScene.addChild(lines);
 }
 
+function duplicatesCheck(duplicates, urls) {
+
+    const index = Math.floor(Math.random() * urls.length);
+
+    if (duplicates.length === 0)
+        return index;
+    else {
+        
+        // run through an array to check duplicates
+        for (let i = 0; i < duplicates.length; i++) {
+
+            if (duplicates[i] !== index) {
+                return index;
+            } else return '';
+        }
+    }
+}
+
 function drawWeapons(names, urls) {
 
     // rows
     const rows = 4;
 
-    for (let i = 0; i < rows; i++) {
+    // account for checking duplicated index values
+    let duplicates = [];
+
+    let i = 0;
+
+    // a while loop is necessary because the loop iteration flow needs to be interrupted
+    // if there is a duplicate found during the production of a random number
+    while (i < rows) {
 
         // sizes
         const size = 40;
@@ -1237,23 +1259,35 @@ function drawWeapons(names, urls) {
         // y-coordinate
         const y = height - (size * 5);
 
-        // a random value
-        const randIndex = Math.floor(Math.random() * urls.length);
+        // a random value and check for duplicates
+        const randIndex = duplicatesCheck(duplicates, urls); 
+        
+        // if the returned value is a number
+        if (typeof(randIndex) === 'number') {
 
-        // create instances of the weapon object
-        weapons[i] = new Weapons(x, y, size, size, names[randIndex], urls[randIndex], PATHS[0]);
+            // create instances of the weapon object
+            weapons[i] = new Weapons(x, y, size, size, names[randIndex], urls[randIndex], PATHS[0]);
 
-        // show all the instances
-        weapons[i].show();
+            // show all the instances
+            weapons[i].show();
 
-        // create and show instances of images corresponding to the weapons
-        imgDOM[i] = new Image();
-        imgDOM[i].className = 'ingame_plant_image';
+            // create and show instances of images corresponding to the weapons
+            imgDOM[i] = new Image();
+            imgDOM[i].className = 'ingame_plant_image';
 
-        weapons[i].showImg(imgDOM[i]);
+            weapons[i].showImg(imgDOM[i]);
 
-        // create lines that separate different rows
-        createLines(((width / rows) * i), height - 5, ((width / rows) * i), 0, 0xFFFF99, 4);
+            // create lines that separate different rows
+            createLines(((width / rows) * i), height - 5, ((width / rows) * i), 0, 0xFFFF99, 4);
+
+            // append the index to the duplicates collection
+            duplicates.push(randIndex);
+
+            // increment i
+            i++;
+        } else {
+            console.log(typeof(randIndex));
+        }
     }
 
     // initialise the score
@@ -1269,11 +1303,38 @@ function endGame() {
     // app.ticker.stop();
 }
 
-function showEndGameBoard() {
+function createTriangle(xPos, yPos, btn_container, colour) {
+
+    let triangle = new PIXI.Graphics();
+
+    let triangleWidth = width / 50,
+        triangleHeight = triangleWidth,
+        triangleHalfway = triangleWidth/2;
+
+    triangle.x = xPos - triangleWidth / 4;
+    triangle.y = yPos;
+    triangle.pivot.set(triangleHalfway, triangleHalfway)
+    triangle.rotation = 1.56;
+
+    // draw triangle 
+    triangle.lineStyle(0, 0x0, 1);
+    triangle.beginFill(colour, 1);
+    triangle.moveTo(triangleWidth, 0);
+    triangle.lineTo(triangleHalfway, triangleHeight); 
+    triangle.lineTo(0, 0);
+    triangle.lineTo(triangleHalfway, 0);
+    triangle.endFill();
+
+    // add the shape to the container
+    btn_container.addChild(triangle);
+}
+
+function showEndGameDetail(fillState, fillState2, cnt) {
 
     ////////////////////////////
     // REMOVE DOM ELEMENTS
     ///////////////////////////
+
     // grab all the in-game images
     const IN_GAME_IMGS = document.querySelectorAll('.ingame_plant_image');
     const IN_GAME_INPUT = document.getElementById('ingame_input_field');
@@ -1284,31 +1345,94 @@ function showEndGameBoard() {
         removeElements([IN_GAME_INPUT]);
     }
 
-    // create a board
-    let rect = new PIXI.Graphics();
-    
-    // style the rect
-    rect.beginFill('rgb(255, 255, 255)');
-    rect.drawRect(width/ 2, height / 2, width / 2);
-    rect.endFill();
-    gameOverScene.addChild(rect);
+    //////////////////////////////
+    // CREATE ELEMENTS
+    /////////////////////////////
 
-    // create a new PIXI garphics instance
-    let style = new PIXI.TextStyle({
-        fontFamily: 'Montserrat',
-        fontSize: width / 25,
-        fill: 'white'
-      });
-    let message = new PIXI.Text('The End!' + '\n' + 'Your score is ' + score, style);
-    message.x = width / 10;
-    message.y = height / 2;
-    gameOverScene.addChild(message);
+    // create a container
+    let btn_container = new PIXI.Container();
+    btn_container.interactive = true;
+
+    // create a button to navigate out of the game canvas
+    let back_btn = new PIXI.Graphics(),
+        btn_noFill = new PIXI.Graphics();
+
+    // clear 
+    btn_noFill.clear();
+    back_btn.clear();
+
+    // a circle with no fills
+    btn_noFill.lineStyle(2, 0x00FF00, 1);
+    btn_noFill.beginFill(fillState);
+    btn_noFill.drawCircle(width - width / 4, height / 2 + width / 25, width / 25);
+    btn_noFill.endFill();
+
+    // add it to the container
+    btn_container.addChild(btn_noFill);
+
+    // a circle with fills
+    back_btn.lineStyle(2, 0x0, 1);
+    back_btn.beginFill(0x90EE90);
+    back_btn.drawCircle(width - width / 4, height / 2 + width / 25, width / 40);
+    back_btn.endFill();
+
+    // add it to the container
+    btn_container.addChild(back_btn);
+
+    // add a mouseover event listener to the container when on hovered
+    btn_container.on('mouseover', () => {
+        showEndGameDetail(0x488214, 0x397D02, 1);
+    });
+
+    // add a mouseout event listener to the container when not hovered
+    btn_container.on('mouseout', () => {
+        showEndGameDetail(0x1A1702, 0x696969, 1);
+    });
+
+    // add a pointer event listener to the container when a pointer registered on it
+    btn_container.on('pointerdown', () => {
+
+        // show the game start button
+        document.getElementById('start_game_button').style.visibility = 'visible';
+            
+        // reset back to the css styling default
+        game_entry.style.setProperty('transform', '', 'important');
+        game_entry.style.setProperty('width', '', 'important');
+        game_entry.style.setProperty('height', '', 'important');
+
+        const game_canvas = document.getElementsByTagName('canvas');
+        
+        game_canvas[game_canvas.length - 1].style.setProperty('display', 'none', 'important');
+
+        app.stage.removeChildren();
+    });
+
+    // create a triangle
+    createTriangle(width - width / 4, height / 2 + width / 25, btn_container, fillState2);
+
+    // add the container to the gameOverScene container
+    gameOverScene.addChild(btn_container);
+
+    if (cnt === 0) {
+
+        // create a new PIXI garphics instance
+        let style = new PIXI.TextStyle({
+            fontFamily: 'Montserrat',
+            fontSize: width / 25,
+            fill: 'white'
+        });
+        let message = new PIXI.Text('The End!' + '\n' + 'Your score is ' + score, style);
+        message.x = width / 10;
+        message.y = height / 2;
+        gameOverScene.addChild(message);
+    }
 }
 
 function showScoreInGame(cnt) {
 
     let container = new PIXI.Container();
 
+    // only run through this code block once
     if (cnt === 0) {
 
         let rect = new PIXI.Graphics();
@@ -1395,10 +1519,16 @@ function drawInsects() {
         
         // loop through the bullets array
         for (let j = bullets.length - 1; j >= 0; j--) {
-
+            
             // if an insect gets hit by a bullet
             if (insects[i].hitBy(bullets[j])) {
 
+                // increment the score
+                score++;
+
+                // re-render the score text on the screen
+                showScoreInGame(1);
+                
                 // clear the shape display
                 bullets[j].shape.clear();
 
@@ -1419,7 +1549,7 @@ function drawInsects() {
                 // if a weapon gets hit by an insect
                 if (weapons[w].hitBy(insects[i])) {
 
-                    showEndGameBoard();
+                    showEndGameDetail(0x1A1702, 0x696969, 0);
 
                     // switch the game state to end the game
                     state = endGame;
