@@ -38,6 +38,9 @@ function loadBullet() {
             ingame_input_field.value = '';
         }
     }
+
+    // play the sound effects
+    playSound('shoot');
 }
 
 // ADD A GLOBAL KEYBOARD LISTENER
@@ -1193,9 +1196,9 @@ let weapons = [],
     imgDOM = [];
 
 // all paths to the images
-const PATHS = ['./assets/static_files/pesticide.png',
-                './assets/static_files/ant.png',
-                './assets/static_files/spider.png'];
+const PATHS = ['./assets/static_files/img/pesticide.png',
+                './assets/static_files/img/ant.png',
+                './assets/static_files/img/spider.png'];
 
 // windows properties settings
 let width = window.innerWidth,
@@ -1561,7 +1564,7 @@ function errHandling() {
     game_entry.appendChild(errDiv);
 
     // path to the refresh image
-    const PATH = './assets/static_files/refresh.png';
+    const PATH = './assets/static_files/img/refresh.png';
 
     // create an image tag for a refresh button
     const refreshButton = new Image();
@@ -1638,6 +1641,9 @@ function drawInsects() {
                 // remove elements out of the arrays
                 bullets.splice(j, 1);
                 insects.splice(i, 1);
+
+                // play the sound effects
+                playSound('hit');
             }
         }
 
@@ -1788,4 +1794,37 @@ function init(names, urls, turns) {
     //Start the game loop by adding the `gameLoop` function to
     //Pixi's `ticker` and providing it with a `delta` argument.
         app.ticker.add(delta => gameLoop(delta));
+
+    // load sound effects
+    loadSound();
+}
+
+////////////////////////////////////
+// SOUND.JS
+///////////////////////////////////
+
+const soundID = 'BubblePop',
+      soundID2 = 'BubblePopHit';
+
+function loadSound() {
+
+    // path to the sound
+    const PATH = './assets/static_files/sound/bubble_pop.mp3';
+    const PATH2 = './assets/static_files/sound/bubble_pop_hit.mp3';
+
+    // maximum number of concurrently playing instances of the same sound
+    const maxConcurrent = 4;
+
+    // load the sounds
+    createjs.Sound.registerSound(PATH, soundID, maxConcurrent);
+    createjs.Sound.registerSound(PATH2, soundID2, maxConcurrent);
+}
+
+function playSound(action) {
+
+    if (action === 'shoot')
+
+        // play the sound
+        createjs.Sound.play(soundID);
+    else createjs.Sound.play(soundID2);
 }
