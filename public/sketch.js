@@ -16,6 +16,10 @@ let myChart = null;
 let navigatingIndex = 0;
 let searched_keyword = '';
 
+
+// for game loop not to be called over again, because then, it will, speed things up
+let turns = -1;
+
 // LOAD BULLET IN GAME
 function loadBullet() {
 
@@ -808,7 +812,7 @@ function listPages(total_plants, on_page_num, isSearched) {
                 } else {
 
                     // same logic
-                    await getPlants(i + 1, i);  
+                    await getPlants(i + 1, i);
                 }          
                 
                 // scroll the page to the top again
@@ -852,9 +856,7 @@ function showGamificationButton(names, urls) {
         removeElements([old_gameStartButton]);
         removeElements([old_gameButton]);
     }
-    
-    let turns = -1;
-    
+        
     // create a button
     const gameButton = document.createElement('div'),
           gameStartButton = document.createElement('div');
@@ -891,7 +893,7 @@ function showGamificationButton(names, urls) {
             game_entry.style.setProperty('height', '100%', 'important');
 
             turns++;
-            init(names, urls, turns);
+            init(names, urls);
         }
     });
 }
@@ -1715,7 +1717,7 @@ function resetGameProperties() {
 }
 
 // INITIALISE THE CODE
-function init(names, urls, turns) {
+function init(names, urls) {
 
     // if a user wants to play the game again, reset all the properties that were run during the previous loop
     resetGameProperties();
@@ -1791,8 +1793,8 @@ function init(names, urls, turns) {
     // the code, then won't trigger the app ticker more than once to keep the frame rate normal
     if (turns === 0)
 
-    //Start the game loop by adding the `gameLoop` function to
-    //Pixi's `ticker` and providing it with a `delta` argument.
+        //Start the game loop by adding the `gameLoop` function to
+        //Pixi's `ticker` and providing it with a `delta` argument.
         app.ticker.add(delta => gameLoop(delta));
 
     // load sound effects
