@@ -106,23 +106,37 @@ async function reconstructStrings(name) {
     } 
 
     // restructure the string
-    // loop through the length of a string
+    // loop through the length of a phrase
     for (let i = 0; i < words.length; i++) {
+
+        // pass a word from the string to another variable
+        let word = words[i];
 
         // if the case is with either whitespaces or underscores
         if (isSplit) {
             
+            // loop through the length of a string
             for (let j = 0; j < words[i].length; j++) {
+                
+                // remove the hyperlink if the app display responds an error message
+                if (!word.includes('https')) {
 
-                // pass a character from the string to another variable
-                let word = words[i];
-    
-                // uppercase all the initial characters
-                if (j === 0) word = words[i][j].toUpperCase();
-                else word = words[i][j];
-    
-                // re-structure all the letters, form a new string
-                letters += word;
+                    // break the word and uppercase all the initial characters
+                    if (j === 0) word = words[i][j].toUpperCase();
+                    else word = words[i][j];
+
+                    // re-structure all the letters, form a new string
+                    letters += word;
+                    
+                } else {
+                    
+                    // replace the hyperlink with another string
+                    word = 'The Sourced API';
+
+                    // re-structure all the letters, form a new string
+                    letters += word;
+                    break;
+                }
             }
     
             // add a white space after a word
@@ -130,9 +144,6 @@ async function reconstructStrings(name) {
 
         // if the string is a single word
         } else {
-
-            // pass a character from the string to another variable
-            let word = words[i];
     
             // uppercase all the initial characters
             if (i === 0) word = words[i].toUpperCase();
@@ -1087,6 +1098,31 @@ async function showPlants(plants, PAGE, on_page_num, isSearched) {
     listPages(plants.meta.total, on_page_num, isSearched);
 }
 
+// APP DISPLAY ERROR HANDLING
+async function appDisplayErrHandling(m) {
+
+    // re-format the message to get rid of the hyperlink
+    m = await reconstructStrings(m);
+    
+    // create a div element
+    const errorDiv = document.createElement('div');
+
+    // style the text
+    errorDiv.style.textAlign = 'center';
+    errorDiv.style.position = 'absolute';
+    errorDiv.style.top = '50%';
+    errorDiv.style.transform = 'translateY(-50%)';
+    errorDiv.style.width = '100%';
+    errorDiv.style.padding = '15px';
+    errorDiv.style.backgroundColor = 'rgba(255, 0, 0, 0.75)';
+    errorDiv.style.color = 'rgba(255, 255, 255, 0.75)';
+
+    // append text to the element
+    errorDiv.innerHTML = m;
+
+    document.body.appendChild(errorDiv);
+}
+
 // GET RECIPE FROM TREFLE
 async function getPlants(PAGE, on_page_num) {
     
@@ -1102,9 +1138,13 @@ async function getPlants(PAGE, on_page_num) {
     // pass in a parameter
     const request = await fetch(`/page/${PAGE}`, options);
     const plants = await request.json();
+    
+    // error handling
+    if (plants.data !== undefined)
 
-    // show the plants
-    showPlants(plants, PAGE, on_page_num, false);
+        // show the plants
+        showPlants(plants, PAGE, on_page_num, false);
+    else appDisplayErrHandling(plants.message);
 }
 
 // SEARCH PLANTS
@@ -1485,9 +1525,9 @@ function showScoreInGame(cnt) {
 
         // rect properties
         const x = width / 2,
-            y = height / 2,
-            w = width / 10,
-            h = height / 10;
+              y = height / 2,
+              w = width / 10,
+              h = height / 10;
         rect.pivot.set(w / 2, h / 2);
         rect.lineStyle(4, 0xFFFF99, 1);
         rect.beginFill(0xFFFF33, 1);
